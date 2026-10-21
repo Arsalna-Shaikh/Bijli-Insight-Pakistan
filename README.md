@@ -1,3 +1,236 @@
+# Bijli-Insight Pakistan
+
+**National Energy Intelligence & Quantile Load Forecasting System**  
+HackInsight 2026 — Pakistan Energy Track  
+**Team:** Void
+
+Bijli-Insight Pakistan turns verified weather telemetry, NEPRA/NEECA policy documents, and quantile forecasts into a local decision studio for K-Electric, LESCO, and IESCO service areas.
+
+---
+
+## Team
+
+| Member | Full name | Department | Year | Role |
+| --- | --- | --- | --- | --- |
+| 1 | Arsalna Shaikh | CSIT | 3rd Year | Backend Development & ML |
+| 2 | Amna Faisal | CSIT | 3rd Year | AI, ML and Deployment |
+| 3 | Kashan Baig | CSIT | 3rd Year | AI Engineer |
+| 4 | Ahmed Raza | CSIT | 3rd Year | Full Stack |
+
+---
+
+## Project Abstract / Overview
+
+Pakistan’s grid is strained by heatwaves, evening peak demand (18:00–22:00 PKT), and steep NEPRA residential slabs. Operators and households need **trustworthy data**, **uncertainty-aware forecasts**, and **policy-grounded advice**—not generic chatbot answers.
+
+This project is a full local stack:
+
+1. Ingest two years of hourly Open-Meteo weather for Karachi, Lahore, and Islamabad (~52,632 rows).
+2. Prove file integrity with SHA-256 hashes in `data/raw/manifest.csv`.
+3. Load a three-layer **DuckDB** warehouse (`cleaned_weather` → `gold_weather_features`).
+4. Run a **Data Quality Agent** with FIX / FILL / FLAG and an immutable `quality_log.json`.
+5. Train **LightGBM** pinball-loss models at q10, q50, and q90 against a t−168 persistence baseline.
+6. Retrieve **NEECA / NEPRA** PDF guidance through a **ChromaDB RAG agent** with a mandatory “I don’t know” fallback.
+7. Orchestrate hourly refresh with **Prefect** and present results in **Streamlit**.
+
+The dashboard covers operational health, warehouse exploration, 7-day quantile charts, a NEPRA-style bill calculator, and a policy Q&A tab.
+
+---
+
+## Problem Statement
+
+- **Peak-hour stress:** Cooling load concentrates between 18:00 and 22:00 PKT, stressing DISCO transformers.
+- **Uncertain weather-load coupling:** A single-point forecast hides worst-case heat and under-prepares operators.
+- **Tariff cliffs:** Crossing 200 kWh/month can move a household from protected to unprotected NEPRA slabs.
+- **Policy disconnect:** NEECA ECBC-2023 (including the 26 °C cooling setpoint) is not wired into everyday tools.
+- **Untrusted data:** Downstream ML and billing advice fail if raw CSVs are incomplete, mistyped, or tampered with.
+
+---
+
+## Objectives
+
+1. Build a reproducible, cryptographically verified raw layer for three Pakistani cities.
+2. Enforce deterministic data-quality rules (cast types, interpolate ≤2-hour gaps, flag physical outliers) with an audit trail.
+3. Produce gold features (lags 1 / 24 / 168 hours, 24-hour rolling temperature) without future leakage (chronological 80/20 split).
+4. Forecast with calibrated **80% intervals** (q10–q90) and non-crossing constraints.
+5. Beat a declared **t−168 persistence baseline** and report MAE on peak, weekend, and heatwave slices.
+6. Ground consumer/operator advice in official PDFs and warehouse `row_id`s; refuse unsupported claims.
+7. Ship a single Streamlit studio that a judge or DISCO analyst can run locally.
+
+---
+
+## Solution Design & Agentic AI Integration
+
+The system is **multi-agent**, not a single LLM wrapper. Two specialized agents sit on a verified warehouse.
+
+### Architecture
+
+```
+Open-Meteo API  →  data/raw/*.csv  →  SHA-256 manifest
+                                      ↓
+                         Data Quality Agent (FIX / FILL / FLAG)
+                                      ↓
+                    DuckDB: cleaned_weather → gold_weather_features
+                                      ↓
+              LightGBM q10/q50/q90  +  Fairness evaluator (vs t−168)
+                                      ↓
+         Insight RAG Agent (ChromaDB + NEECA/NEPRA PDFs + gold row_ids)
+                                      ↓
+              Prefect hourly flow  →  Streamlit decision studio
+```
+
+### Agentic components
+
+| Agent | Role | How it decides |
+| --- | --- | --- |
+| **Data Quality Agent** (`agents/data_quality_agent.py`) | Autonomous remediation | **FIX** object→numeric casts; **FILL** linear interpolation for gaps of at most two hours (`is_imputed`); **FLAG** temperatures outside −10 °C to 55 °C (`is_anomalous`) without rewriting the measurement. Every action is appended to `data/quality_log.json`. |
+| **Insight RAG Agent** (`agents/insight_rag_agent.py`) | Grounded policy advisor | Chunks official PDFs with pypdf, indexes them in ChromaDB, optionally joins DuckDB gold `row_id`s. If retrieval is ungrounded, it **must** reply “I don’t know” (`fallback_triggered: true`) instead of inventing tariffs or kWh figures. |
+
+These are **custom Python agents** with typed payloads (`QualityDecisionLog`, `GroundedInsightPayload`). The stack does **not** use CrewAI, AutoGPT, BabyAGI, LangChain, or LangGraph. Orchestration of fetch → DQA → warehouse → status JSON is **Prefect**.
+
+### Core modules
+
+| Module | Path | Function |
+| --- | --- | --- |
+| Acquisition | `pipeline/data_fetcher.py` | Open-Meteo archive fetch, SHA-256 |
+| Manifest | `pipeline/generate_manifest.py` | Audit ledger `manifest.csv` |
+| Warehouse | `pipeline/warehouse_pipeline.py` | Verify hashes; build cleaned + gold tables |
+| Orchestration | `pipeline/flow.py` | Hourly Prefect flow (`5 * * * *`) |
+| DQA | `agents/data_quality_agent.py` | Tri-action quality protocol |
+| RAG | `agents/insight_rag_agent.py` | Policy retrieval + fallback |
+| Quantile ML | `ml/quantile_model.py` | LightGBM pinball loss |
+| Evaluation | `ml/model_evaluator.py` | Baseline, coverage, group MAE |
+| UI | `frontend/app.py` | Streamlit studio |
+| Knowledge | `rag_knowledge_base/` | NEECA policy PDFs |
+
+---
+
+## Data Orchestration Pipeline
+
+**Schedule:** Prefect flow `bijli_insight_hourly_flow`, intended cron `5 * * * *` (minute 5 of every hour).
+
+**Steps (`pipeline/flow.py`):**
+
+1. **Fetch** current hour from Open-Meteo forecast API (Karachi / Lahore / Islamabad). Offline fallback returns a realistic observation so the flow does not hard-fail.
+2. **Audit** through `DataQualityAgent.inspect_and_remediate` and persist decisions to `data/quality_log.json`.
+3. **Append** the cleaned row into DuckDB `cleaned_weather` with a deterministic MD5 `row_id`.
+4. **Log** `data/pipeline_status.json` and append `data/prefect_runs.csv` (MAE vs baseline, freshness minutes, run state).
+
+**Batch rebuild (from scratch):**
+
+1. `python -m pipeline.generate_manifest` — scan `data/raw/`, hash CSVs, write `manifest.csv`.
+2. `python -m pipeline.warehouse_pipeline` — checksum every file; create `cleaned_weather` and `gold_weather_features` in `data/warehouse.duckdb`.
+
+Gold features include `temp_lag_1`, `temp_lag_24`, `temp_lag_168`, `temp_rolling_24`, `hour`, and `day_of_week`, partitioned by source filename so cities do not leak into each other.
+
+---
+
+## Tools, APIs & Technology Stack Used
+
+Submission checklist (only items **used in this repository** are marked Yes).
+
+| Category | Options from brief | Used in this project |
+| --- | --- | --- |
+| **Programming languages** | Python, R, Java, C++ | **Python 3.11** |
+| **Frameworks / libraries** | TensorFlow, PyTorch, LangChain, pandas, numpy, LightGBM, scikit-learn, pydantic, pypdf | **pandas, numpy, LightGBM, scikit-learn, pydantic, pypdf, requests**. Not TensorFlow, PyTorch, or LangChain. |
+| **Databases** | PostgreSQL, MySQL, MongoDB | **DuckDB** (analytical warehouse) and **ChromaDB** (vector store). Not PostgreSQL / MySQL / MongoDB. |
+| **Cloud platforms** | AWS, Azure, Google Cloud Platform | **None as hosting.** Data source is the public **Open-Meteo** API. Runs fully on a local machine. |
+| **BI / visualization** | Power BI, Tableau, Streamlit | **Streamlit** |
+| **Orchestration** | Apache Airflow, Other | **Prefect** (not Airflow) |
+| **Agentic AI frameworks** | CrewAI, AutoGPT, BabyAGI, LangGraph | **Custom agents** (DQA + RAG Insight Agent) on ChromaDB. Not CrewAI / AutoGPT / BabyAGI / LangGraph. |
+
+### APIs and data sources
+
+- [Open-Meteo Archive API](https://archive-api.open-meteo.com/v1/archive) — historical hourly temperature, humidity, wind  
+- [Open-Meteo Forecast API](https://api.open-meteo.com/v1/forecast) — live hourly observation in the Prefect flow  
+- Official PDFs in `rag_knowledge_base/` — NEECA energy conservation / ECBC material  
+
+### Runtime dependencies (`requirements.txt`)
+
+`duckdb`, `pandas`, `numpy`, `requests`, `lightgbm`, `scikit-learn`, `pydantic`, `prefect`, `streamlit`, `chromadb`, `pypdf`, `pytest`
+
+---
+
+## Results & Findings
+
+| Result | Evidence |
+| --- | --- |
+| **52,632 verified hourly rows** | 17,544 hours × 3 cities in `manifest.csv` and DuckDB |
+| **Integrity gate** | Warehouse refuses to build if SHA-256 ≠ manifest |
+| **Gold features** | Lags and 24-hour rolling temperature per DISCO file |
+| **Quantile contract** | Tests assert q10 ≤ q50 ≤ q90 and 100% coverage on a constructed interval set |
+| **Baseline contract** | Persistence MAE on a toy series is 2.333 °C as specified in `tests/test_model.py` |
+| **RAG safety** | Ungrounded queries trigger fallback (`I don't know`) rather than invented 2045 tariffs |
+| **Operator UI** | Streamlit tabs: health/audit, warehouse, 7-day quantile studio, bill calculator, policy RAG |
+
+Group evaluation is designed for Pakistan operations: peak hours 18:00–22:00 PKT, weekends vs weekdays, and heatwave days (temperature ≥ 35 °C).
+
+---
+
+## How does your project enhance business intelligence or decision-making?
+
+- **DISCO / grid planners** see a **range** (q10–q90), not a single temperature, so peak AC stress can be planned with an 80% band instead of a false-precise point.
+- **Fairness slices** show whether error blows up on heatwave evenings—the hours that actually drive load-shedding risk.
+- **Households and SME users** get a NEPRA-style slab estimate and a NEECA 26 °C savings prompt, linking kWh behaviour to rupee outcomes.
+- **Compliance / audit** can trace every raw file (hash), every DQA action (JSON log), and every Prefect run (CSV), which is the BI requirement for “why did the number change?”
+- **Policy answers** are cited to NEECA/NEPRA text (and optional gold `row_id`s), reducing hallucinated tariffs in consumer-facing BI.
+
+The product is a **decision studio**: warehouse + forecast + tariff + regulation in one screen, not a disconnected notebook.
+
+---
+
+## Future Scope / Improvements
+
+1. Train and serialize live LightGBM boosters from `gold_weather_features` on each Prefect cycle; replace dashboard demo series with `predict_intervals`.
+2. Join actual DISCO load / feeder MW (where licensed) instead of weather-as-proxy for cooling stress.
+3. Add Time-of-Use meters and official NEPRA S.R.O. tables as structured data, not only PDF chunks.
+4. Deploy Prefect on a small VM or GitHub Actions cron; expose Streamlit behind auth for a DISCO analyst group.
+5. Expand RAG to Urdu queries and additional NEECA/NEPRA circulars; log citation click-through for audit.
+6. Alerting: SMS/email when q90 temperature path implies peak-hour transformer overload in a selected city.
+7. Drift monitors: if live Open-Meteo vs gold residuals exceed a threshold, auto-FLAG and pause model publish.
+
+---
+
+## Project layout
+
+```
+Bijli-Insight-Pakistan/
+├── agents/                 # DQA + RAG insight agents
+├── pipeline/               # fetch, manifest, warehouse, Prefect flow
+├── ml/                     # quantile forecaster + fairness evaluator
+├── frontend/app.py         # Streamlit studio
+├── tests/                  # pytest contracts
+├── data/raw/               # Open-Meteo CSVs + manifest.csv
+├── data/warehouse.duckdb   # cleaned + gold layers
+├── rag_knowledge_base/     # NEECA PDFs
+├── requirements.txt
+└── Makefile
+```
+
+---
+
+## How to run
+
+```powershell
+cd "C:\Users\cz 3\Bijli-Insight-Pakistan"
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+python -m pipeline.generate_manifest
+python -m pipeline.warehouse_pipeline
+python -m pytest tests/ -v
+python -m pipeline.flow
+streamlit run frontend/app.py
+```
+
+Makefile targets: `make data`, `make test`, `make pipeline`, `make app`.
+
+---
+
+## License and data notice
+
+Weather series are from Open-Meteo (open access). Policy PDFs remain the property of NEECA / Government of Pakistan publishers; this repo uses them for retrieval and citation only. Forecasts are decision-support, not a substitute for official NEPRA tariff notifications.
 
 # ⚡ Bijli-Insight Pakistan: Complete System Architecture & Module Guide
 
