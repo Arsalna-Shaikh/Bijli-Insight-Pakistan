@@ -13,17 +13,6 @@ Bijli-Insight turns verified weather telemetry, NEPRA/NEECA policy documents and
 
 ---
 
-## Team
-
-| Member | Full name | Department | Year | Role |
-| --- | --- | --- | --- | --- |
-| 1 | Arsalna Shaikh | CSIT | 3rd Year | Backend Development & ML |
-| 2 | Amna Faisal | CSIT | 3rd Year | AI, ML and Deployment |
-| 3 | Kashan Baig | CSIT | 3rd Year | AI Engineer |
-| 4 | Ahmed Raza | CSIT | 3rd Year | Full Stack |
-
----
-
 ## Project Abstract / Overview
 
 Pakistan's grid is strained by heatwaves, evening peak demand (18:00–22:00 PKT) and steep NEPRA residential slabs. Operators and households need **trustworthy data**, **uncertainty-aware forecasts** and **policy-grounded advice**, not generic chatbot answers.
