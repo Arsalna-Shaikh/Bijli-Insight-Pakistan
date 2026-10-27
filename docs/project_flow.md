@@ -514,7 +514,6 @@ Bijli-Insight-Pakistan/
 ├── docs/                           current_flow.md, fix.md, hackathonguide.md
 ├── AI_Use_Log.md                   required submission doc
 ├── Dataset_Declaration.md          required submission doc
-├── HANDOFF.md                      session-to-session state summary
 └── Makefile                        make data / make test / make pipeline / make app
 ```
 

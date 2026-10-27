@@ -10,6 +10,7 @@ from pathlib import Path
 
 from backend.ml.quantile_model import QuantileEnergyForecaster
 from backend.agents.insight_rag_agent import InsightAgentRAG
+from backend.pipeline.build_knowledge_base import ensure_knowledge_base
 import chromadb
 
 app = FastAPI()
@@ -21,10 +22,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def allow_private_network(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    return response
+
 DB_PATH    = Path("data/warehouse.duckdb")
 MODELS_DIR = Path("models")
 CHROMA_DIR = Path("data/chroma_db")
 RAW_DIR    = Path("data/raw")
+FORECAST_INPUTS = Path("data/forecast_inputs")
 
 CITY_MAP = {
     "karachi":   {"file": "open-meteo-24.85N66.99E7m.csv",   "lat": 24.85, "lon": 66.99},
@@ -34,7 +43,13 @@ CITY_MAP = {
 
 forecaster    = QuantileEnergyForecaster(models_dir=MODELS_DIR)
 chroma_client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-rag_agent     = InsightAgentRAG(chroma_client=chroma_client)
+rag_agent     = InsightAgentRAG(chroma_client=chroma_client, max_policy_results=6)
+ensure_knowledge_base(rag_agent)  # Render's disk is fresh on each deploy
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 
 def _conn():
@@ -55,21 +70,47 @@ async def forecast(city: str = "karachi"):
         f"&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m"
         f"&forecast_days=7&timezone=Asia%2FKarachi"
     )
-    async with httpx.AsyncClient(timeout=15) as client:
-        r = await client.get(url)
-    hourly   = r.json()["hourly"]
-    temps    = hourly["temperature_2m"][:168]
-    humidity = hourly["relative_humidity_2m"][:168]
-    wind     = hourly["wind_speed_10m"][:168]
-
     conn = _conn()
     lag_rows = conn.execute(
-        "SELECT temperature_c FROM gold_weather_features "
+        "SELECT temperature_c, humidity_pct, wind_speed_kmh FROM gold_weather_features "
         "WHERE filename = ? ORDER BY timestamp_utc DESC LIMIT 200",
         [cfg["file"]]
     ).fetchall()
     conn.close()
     hist = [row[0] for row in reversed(lag_rows)]  # oldest first
+
+    hourly = None
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            for _ in range(2):
+                hourly = (await client.get(url)).json().get("hourly")
+                if hourly:
+                    break
+    except (httpx.HTTPError, ValueError):
+        pass
+    snapshot = FORECAST_INPUTS / f"{cfg['file']}.json"
+    if not hourly and snapshot.exists():
+        # Open-Meteo rate-limits Render's shared IP; use the latest committed 16-day Open-Meteo forecast,
+        # starting from the current PKT hour so a snapshot from an earlier day stays aligned.
+        snap  = json.loads(snapshot.read_text(encoding="utf-8"))
+        now   = pd.Timestamp.now("Asia/Karachi").strftime("%Y-%m-%dT%H:00")
+        start = next((i for i, t in enumerate(snap["time"]) if t >= now), len(snap["time"]))
+        if len(snap["time"]) - start >= 168:
+            hourly = {k: v[start:] for k, v in snap.items()}
+            source = "open-meteo-snapshot"
+    elif hourly:
+        source = "open-meteo"
+    if hourly:
+        temps    = hourly["temperature_2m"][:168]
+        humidity = hourly["relative_humidity_2m"][:168]
+        wind     = hourly["wind_speed_10m"][:168]
+    else:
+        # no forecast at all: reuse the last observed week as weather inputs
+        source   = "warehouse"
+        week     = list(reversed(lag_rows[:168]))
+        temps    = [float(r[0]) for r in week]
+        humidity = [float(r[1]) for r in week]
+        wind     = [float(r[2]) for r in week]
 
     rows = []
     for i in range(168):
@@ -95,6 +136,7 @@ async def forecast(city: str = "karachi"):
         "lo": [round(v, 2) for v in preds["q_low"].tolist()],
         "md": [round(v, 2) for v in preds["q_mid"].tolist()],
         "hi": [round(v, 2) for v in preds["q_high"].tolist()],
+        "source": source,
     }
 
 
@@ -153,18 +195,15 @@ def status():
     conn  = _conn()
     total = conn.execute("SELECT COUNT(*) FROM gold_weather_features").fetchone()[0]
     conn.close()
-    return {
-        "last_fetch_mins_ago": 4,
-        "mae":                 0.42,
-        "baseline_mae":        0.68,
-        "dropped":             0,
-        "fixed":               142,
-        "filled":              3,
-        "flagged":             12,
-        "last_sync":           "2026-10-21 08:37 UTC",
-        "layers":              {"raw": True, "silver": True, "gold": True},
-        "total_rows":          total,
-    }
+    # No pipeline run recorded yet: report that honestly instead of placeholder metrics.
+    return {"status": "NO_RUN_YET", "active_records_count": total}
+
+
+@app.get("/api/quality_log")
+def quality_log(limit: int = 250):
+    log_file = Path("data/quality_log.json")
+    records = json.loads(log_file.read_text(encoding="utf-8")) if log_file.exists() else []
+    return records[::-1][:limit]  # newest first
 
 
 @app.get("/api/tariffs")
@@ -184,12 +223,14 @@ async def chat(body: dict):
     question = body.get("question", "").strip()
     if not question:
         return {"answer": "Please ask a question.", "source": "", "confidence": "0%", "fallback": True}
-    ctx    = rag_agent.retrieve_grounding_context(question)
-    result = rag_agent.synthesize_verified_advice(question, ctx)
+    result = rag_agent.answer(question)
     sources = [c["document_title"] for c in result["cited_documents"]]
     return {
-        "answer":     result["narrative_explanation"],
-        "source":     sources[0] if sources else "",
-        "confidence": f"{result['confidence_score'] * 100:.1f}%",
-        "fallback":   result["fallback_triggered"],
+        "answer":      result["narrative_explanation"],
+        # every document the answer was grounded on, not just the top hit
+        "source":      " · ".join(dict.fromkeys(sources)),
+        "confidence":  f"{result['confidence_score'] * 100:.1f}%",
+        "fallback":    result["fallback_triggered"],
+        "pathway":     result["source_pathway"],
+        "web_sources": result["web_sources"],
     }

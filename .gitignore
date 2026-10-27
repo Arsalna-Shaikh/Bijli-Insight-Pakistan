@@ -218,3 +218,23 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+.impeccable/
+
+# --- Project-specific (keep the submission repo clean) ---
+# Internal agent/session notes and design-tool state
+HANDOFF.md
+.claude/
+graphify-out/
+# Editor / OS clutter
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+# Saved browser copies of the dashboard
+Bijli-Insight Pakistan (*).html
+*.bak
+*.tmp
+# Local caches and logs
+.cache/
+logs/

@@ -73,7 +73,7 @@ class DataQualityAgent:
         for col in df.columns:
             name_lower = str(col).lower()
             if any(p in name_lower for p in target_patterns):
-                if df[col].dtype == object:
+                if not pd.api.types.is_numeric_dtype(df[col]):  # pandas 3 text is "str", not object
                     converted = pd.to_numeric(df[col], errors="coerce").astype("float32")
                     df[col] = converted
                     self.log_decision(

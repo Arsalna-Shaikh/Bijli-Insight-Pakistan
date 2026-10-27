@@ -5,7 +5,7 @@ Purpose: Unit tests validating the Tri-Action contract (FIX, FILL, FLAG).
 
 from pathlib import Path
 import pandas as pd
-from agents.data_quality_agent import DataQualityAgent, DQAAction
+from backend.agents.data_quality_agent import DataQualityAgent, DQAAction
 
 
 def test_dqa_tri_action_contract(tmp_path):
@@ -32,3 +32,12 @@ def test_dqa_tri_action_contract(tmp_path):
         assert DQAAction.FLAG in actions_logged
     except NotImplementedError:
         pass  # Test structure ready for implementation
+
+def test_dqa_fixes_and_fills_all_text_column(tmp_path):
+    """pandas 3 stores all-text columns as "str", not object; FIX must still cast and FILL must interpolate."""
+    agent = DataQualityAgent(log_path=tmp_path / "quality_log.json")
+    df_clean = agent.inspect_and_remediate(pd.DataFrame({"humidity_pct": ["60", None, "70"]}))
+
+    assert df_clean["humidity_pct"].tolist() == [60.0, 65.0, 70.0]
+    assert df_clean["is_imputed"].tolist() == [False, True, False]
+    assert {DQAAction.FIX, DQAAction.FILL} <= {log["action_taken"] for log in agent.decision_log}

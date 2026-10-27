@@ -4,7 +4,7 @@
 
 # 1. Rebuild entire 3-tier warehouse from scratch
 data:
-	python -m pipeline.warehouse_pipeline
+	python -m backend.pipeline.warehouse_pipeline
 
 # 2. Run all unit tests and contract assertions
 test:
@@ -12,7 +12,7 @@ test:
 
 # 3. Execute one cycle of the hourly pipeline
 pipeline:
-	python -m pipeline.flow
+	python -m backend.pipeline.flow
 
 # 4. Launch the Streamlit dashboard locally
 app:

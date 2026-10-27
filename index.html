@@ -1,430 +1,666 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bijli-Insight Pakistan</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<meta name="description" content="Hourly heat and electricity-demand forecasts for Karachi, Lahore and Islamabad, with NEPRA bill estimates and NEECA policy answers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Martian+Mono:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f6f5;--panel:#fff;--ink:#10231f;--mute:#5b6f6a;--line:#dbe4e1;--pine:#0b5d4b;--pine2:#e1f2ed;--amber:#c97a00;--amber2:#fdf0d8;--blue:#1d6fa5;--ok:#157a4b;--bad:#b4372c;--chip:#eef3f1;
-color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1513;--panel:#101f1c;--ink:#e6f1ee;--mute:#92a8a2;--line:#213733;--pine:#3fd1a6;--pine2:#0f2e27;--amber:#f2b04a;--amber2:#2e2410;--blue:#6bb8ee;--ok:#4cd08c;--bad:#ff8a7d;--chip:#162925;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0a1513;--panel:#101f1c;--ink:#e6f1ee;--mute:#92a8a2;--line:#213733;--pine:#3fd1a6;--pine2:#0f2e27;--amber:#f2b04a;--amber2:#2e2410;--blue:#6bb8ee;--ok:#4cd08c;--bad:#ff8a7d;--chip:#16292e;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Figtree,system-ui,sans-serif}
-button,select,input{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
-.app{display:grid;grid-template-columns:268px 1fr;min-height:100vh}
-aside{background:var(--panel);border-right:1px solid var(--line);padding:22px 18px;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;gap:22px}
-.brand{display:flex;gap:10px;align-items:center}
-.logo{width:38px;height:38px;border-radius:10px;background:var(--pine);display:grid;place-items:center;color:var(--bg);font-weight:700;font-size:20px}
-.brand b{display:block;font-size:17px;line-height:1.1}.brand small{color:var(--mute);font-size:12px}
-nav{display:flex;flex-direction:column;gap:2px}
-nav a{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;color:var(--mute);text-decoration:none;font-weight:500}
-nav a:hover{background:var(--chip);color:var(--ink)}
-nav a[aria-current=page]{background:var(--pine2);color:var(--pine);font-weight:600}
-nav svg{width:18px;height:18px;flex:none}
-.grp h4{margin:0 0 8px;font-size:12.5px;color:var(--mute);font-weight:600}
-select,.slider{width:100%}
-select{padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
-.radio{display:flex;flex-direction:column;gap:6px}
-.radio label{display:flex;gap:9px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:13.5px}
-.radio label:has(input:checked){border-color:var(--pine);background:var(--pine2)}
-.radio input{accent-color:var(--pine)}
-.store{margin-top:auto;font-size:12.5px;color:var(--mute);border:1px solid var(--line);border-radius:10px;padding:12px}
-.store b{color:var(--ink)}
-main{padding:26px clamp(16px,3vw,40px) 50px;max-width:1240px;width:100%}
-.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:22px}
-.top h1{margin:0;font-size:26px;letter-spacing:-.01em}
-.top p{margin:2px 0 0;color:var(--mute)}
-.ur{font-family:"Noto Nastaliq Urdu",serif;font-size:15px;color:var(--pine);line-height:2}
-.pills{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pill{display:inline-flex;gap:6px;align-items:center;background:var(--chip);border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:13px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
-.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 12px;cursor:pointer}
-.btn.p{background:var(--pine);color:var(--bg);border-color:var(--pine);font-weight:600}
-section.view{display:none}section.view.on{display:block}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:18px}
-.kpi small{color:var(--mute);display:block}
-.kpi strong{font-size:30px;letter-spacing:-.02em;display:block;line-height:1.2;margin:4px 0}
-.tag{font-size:12.5px;padding:2px 8px;border-radius:99px;background:var(--pine2);color:var(--ok);font-weight:600}
-.tag.a{background:var(--amber2);color:var(--amber)}
-h2{font-size:18px;margin:0 0 4px}.sub{color:var(--mute);margin:0 0 14px;max-width:70ch}
-.row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:18px}
-.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
-th{text-align:left;color:var(--mute);font-weight:600;border-bottom:1px solid var(--line);padding:8px 10px;white-space:nowrap}
-td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-td.m{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
-tr:last-child td{border:0}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-.steps div{background:var(--chip);border-radius:10px;padding:12px}
-.steps b{font-size:22px;display:block}
-.steps span{font-size:12.5px;color:var(--mute)}
-details{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--panel)}
-summary{cursor:pointer;font-weight:600}
-details p{color:var(--mute);margin:10px 0 0;max-width:75ch}
-.ctrl{display:flex;gap:18px;flex-wrap:wrap;align-items:end;margin-bottom:16px}
-.ctrl label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mute);min-width:200px}
-.ctrl input[type=range]{accent-color:var(--pine)}
-svg.chart{width:100%;height:auto;display:block}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:8px}
-.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
-.slice{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:18px}
-.bar{height:6px;border-radius:3px;background:var(--chip);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pine)}
-.bill{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.big{font-size:40px;font-weight:700;letter-spacing:-.02em}
-.line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line)}
-.note{font-size:12.5px;color:var(--mute);margin-top:10px}
-.chat{display:flex;flex-direction:column;gap:12px;min-height:240px}
-.msg{padding:12px 14px;border-radius:12px;max-width:72ch}
-.msg.u{background:var(--pine);color:var(--bg);align-self:flex-end}
-.msg.b{background:var(--chip)}
-.msg cite{display:block;margin-top:6px;font-size:12.5px;color:var(--mute)}
-.ask{display:flex;gap:8px;margin-top:12px}.ask input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
-.sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.card{position:relative}
-.hero{display:grid;gap:18px;background:linear-gradient(135deg,#0b5d4b,#0a3b46);color:#fff;border-radius:18px;padding:24px;margin-bottom:18px}
-.hero small,.hero p{opacity:.85;margin:0}.hero h2{font-size:25px;line-height:1.25;margin:4px 0 8px;color:#fff;max-width:36ch}
-.days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-.day{background:rgba(255,255,255,.12);border:2px solid transparent;border-radius:12px;padding:10px 4px;text-align:center;color:#fff;text-decoration:none}
-.day:hover{border-color:rgba(255,255,255,.6)}.day b{display:block;font-size:22px}.day small{display:block}.day i{display:block;height:4px;border-radius:2px;margin:8px 12px 0}
-.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:8px 10px;border-radius:8px;font-size:12.5px;line-height:1.5;display:none;white-space:nowrap;z-index:2}
-.hint{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--amber2);color:var(--amber);font-size:13.5px;font-weight:500}
-svg.chart{touch-action:pan-y;cursor:crosshair}
-.line input[type=number]{width:60px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
-.line label{display:flex;gap:8px;align-items:center}
-.alert{display:none;background:var(--amber2);color:var(--amber);border:1px solid var(--amber);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-weight:500}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:13.5px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:5}
-.line input[type=checkbox]{accent-color:var(--pine);width:16px;height:16px}
-body{background:radial-gradient(1100px 480px at 85% -8%,var(--pine2),transparent 70%),var(--bg)}
-.card{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 4px rgba(10,40,35,.07),0 16px 30px -12px rgba(10,40,35,.28);transition:transform .18s ease,box-shadow .18s}
-.card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 8px rgba(10,40,35,.08),0 24px 40px -14px rgba(10,40,35,.38)}
-aside{box-shadow:8px 0 28px -16px rgba(10,40,35,.35)}
-.btn{transition:transform .1s}.btn:active{transform:translateY(1px)}.btn.p{box-shadow:0 8px 16px -8px var(--pine),inset 0 1px 0 rgba(255,255,255,.3)}
-.hero{box-shadow:0 26px 44px -20px rgba(10,60,50,.7),inset 0 1px 0 rgba(255,255,255,.25)}
-.day{box-shadow:0 8px 14px -8px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .15s}.day:hover{transform:translateY(-3px)}
-.ic{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,var(--pine2),var(--chip));box-shadow:0 6px 12px -4px rgba(10,60,50,.4),inset 0 1px 0 rgba(255,255,255,.6);font-size:18px;margin-bottom:8px}
-.cities{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px}
-.city{cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit}.city[aria-pressed=true]{outline:2px solid var(--pine);outline-offset:0}
-.city b{display:block;font-size:30px;letter-spacing:-.02em;line-height:1.2}
-.cg{display:none;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.cg.on{display:grid}
-.cg div{background:var(--chip);border-radius:12px;padding:12px;box-shadow:0 8px 14px -10px rgba(10,40,35,.5),inset 0 1px 0 rgba(255,255,255,.4)}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:14px}.seg button{border:0;background:transparent;padding:7px 14px;cursor:pointer}.seg button[aria-pressed=true]{background:var(--pine);color:var(--bg);font-weight:600}
-body{background:var(--bg)}
-.card{border-radius:12px;box-shadow:0 1px 2px rgba(10,40,35,.06),0 12px 24px -16px rgba(10,40,35,.3)}
-.card:hover{box-shadow:0 1px 2px rgba(10,40,35,.08),0 18px 30px -16px rgba(10,40,35,.38)}
-.ic{background:var(--pine2);box-shadow:none;border-radius:10px;width:36px;height:36px}
-.ic svg{width:20px;height:20px;fill:none;stroke:var(--pine);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.herowrap{display:grid;grid-template-columns:1fr 380px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#0b5d4b,#082f3a);margin-bottom:18px;box-shadow:0 24px 40px -22px rgba(8,47,58,.8)}
-.hero{background:none;box-shadow:none;border-radius:0;margin:0}
-#g3h{min-height:280px}canvas{display:block;cursor:grab}canvas:active{cursor:grabbing}
-#v-warehouse th{cursor:pointer}#v-warehouse th:hover{color:var(--ink)}
-dialog{border:1px solid var(--line);border-radius:14px;padding:0;width:min(480px,92vw);background:var(--panel);color:var(--ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}dialog::backdrop{background:rgba(5,20,18,.5)}
-#cmdq{width:100%;border:0;border-bottom:1px solid var(--line);padding:14px 16px;background:transparent;font-size:16px;outline:0}
-#cmdl{max-height:50vh;overflow:auto;padding:6px 0}#cmdl button{display:block;width:100%;border:0;background:transparent;padding:10px 16px;cursor:pointer;text-align:left}#cmdl button:hover,#cmdl button.on{background:var(--pine2)}
-kbd{font:12px ui-monospace,monospace;border:1px solid var(--line);border-radius:5px;padding:0 5px;color:var(--mute)}
-@media (max-width:900px){.herowrap{grid-template-columns:1fr}#g3h{min-height:240px;height:240px}}
-.ib{display:inline-grid;place-items:center;padding:8px}.ib svg,.seg svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.seg button{padding:7px 12px}
-.tbl{max-height:480px;overflow:auto}thead th{position:sticky;top:0;background:var(--panel);z-index:1}tbody tr:nth-child(even){background:var(--chip)}tbody tr:hover{background:var(--pine2)}
-.dotc{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px}.mb{display:inline-block;width:46px;height:5px;border-radius:3px;background:var(--line);margin-right:8px;vertical-align:middle;overflow:hidden}.mb i{display:block;height:100%;background:var(--blue)}
-.cg div{transition:transform .15s}.cg div:hover{transform:translateY(-2px)}
-.logo svg{display:block}
-.brand .ib{margin-left:auto}
-.grp h4{text-transform:none;letter-spacing:0}
-nav a[aria-current=page]{box-shadow:inset 3px 0 0 var(--pine)}
-.radio input{position:absolute;opacity:0}.radio label{position:relative;gap:10px}.radio label:has(input:focus-visible){outline:2px solid var(--pine)}
-.ri{width:32px;height:32px;border-radius:9px;background:var(--chip);display:grid;place-items:center;flex:none}.ri svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.radio label:has(input:checked) .ri{background:var(--pine);color:var(--bg)}
-.radio b{display:block;font-size:13.5px;line-height:1.2}.radio small{color:var(--mute);font-size:12px}
-.cinfo{margin-top:8px;display:flex;justify-content:space-between;background:var(--chip);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--mute)}.cinfo b{color:var(--ink)}
-.lay{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}.lay span{display:flex;gap:8px;align-items:center}
-.app.c{grid-template-columns:76px 1fr}.app.c aside{padding:16px 10px;align-items:center}.app.c .brand div:not(.logo),.app.c .grp,.app.c .store{display:none}.app.c .brand{flex-direction:column}.app.c .brand .ib{margin:0}.app.c #col svg{transform:rotate(180deg)}.app.c nav a{font-size:0;gap:0;justify-content:center;padding:11px}
-.pah{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px}.pah h2{margin:0}.pah small{color:var(--mute)}.pah .ib{margin-left:auto}
-.av{width:38px;height:38px;border-radius:12px;background:var(--pine);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}.av.s{width:30px;height:30px;font-size:11px;border-radius:9px}
-.chat{max-height:420px;overflow:auto}.msg{display:flex;gap:10px;background:none;padding:0;max-width:none}.msg.u{background:none;color:inherit;align-self:flex-end}
-.bb{padding:10px 14px;border-radius:14px;max-width:62ch}.msg.u .bb{background:var(--pine);color:var(--bg);border-bottom-right-radius:4px}.msg.b .bb{background:var(--chip);border-bottom-left-radius:4px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;border:1px solid}.chip.g{color:var(--ok);border-color:var(--ok);background:var(--pine2)}.chip.b{color:var(--blue);border-color:var(--blue)}.chip.a{color:var(--amber);border-color:var(--amber);background:var(--amber2)}
-.dots i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mute);margin:0 2px;animation:bl 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}@keyframes bl{50%{opacity:.25}}
-.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.topics button{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:12px;cursor:pointer}.topics button:hover{border-color:var(--pine);background:var(--pine2)}.topics b{display:block}.topics small{color:var(--mute)}
-.ask{border:1px solid var(--line);border-radius:12px;padding:6px;background:var(--bg)}.ask input{border:0;background:transparent;outline:0}
-.fctl{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:6px}.fctl .seg{margin:0;max-width:100%;overflow-x:auto}.fopts{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.chk{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mute);cursor:pointer}.chk input{accent-color:var(--pine)}
-.fstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0 12px}.fstats div{background:var(--chip);border-radius:10px;padding:10px 12px}.fstats small{display:block;color:var(--mute)}.fstats b{font-size:20px;letter-spacing:-.01em}.fstats span{font-size:12.5px;color:var(--mute);margin-left:6px}
-@media (max-width:900px){.app.c{grid-template-columns:1fr}}
-@media (max-width:600px){.days{grid-template-columns:repeat(4,1fr)}}
-@media (max-width:900px){
-.app{grid-template-columns:1fr}
-aside{position:static;height:auto;border:0;border-bottom:1px solid var(--line);padding:14px}
-nav{flex-direction:row;overflow-x:auto}nav a{white-space:nowrap}
-.store{display:none}.row,.bill{grid-template-columns:1fr}.steps{grid-template-columns:repeat(3,1fr)}
-.radio{flex-direction:row;flex-wrap:wrap}
+:root{
+ --paper:#FCFCFA;--ink:#17181A;--ink2:#4A4D52;--hair:#C9CBCF;--soft:#EEEFEC;
+ --green:#DCEBD9;--green-ink:#24563A;--pink:#F6DDE3;--pink-ink:#8A2340;
+ --stamp:#233E8B;--alert:#B3261E;--cool:#2F5FA8;
+ --guil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='24'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.08' stroke-width='.7'%3E%3Cpath d='M0 12Q15 0 30 12T60 12T90 12T120 12'/%3E%3Cpath d='M0 12Q15 24 30 12T60 12T90 12T120 12'/%3E%3Cpath d='M0 6Q15 18 30 6T60 6T90 6T120 6'/%3E%3Cpath d='M0 18Q15 6 30 18T60 18T90 18T120 18'/%3E%3C/g%3E%3C/svg%3E");
+ --f-ui:"Archivo",system-ui,sans-serif;--f-num:"Martian Mono",ui-monospace,monospace;--f-ur:"Noto Nastaliq Urdu",serif;
+ color-scheme:light;
 }
-@media (prefers-reduced-motion:no-preference){.view.on{animation:in .25s ease-out}@keyframes in{from{opacity:.4}to{opacity:1}}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --paper:#14161B;--ink:#ECEDEF;--ink2:#A7ABB3;--hair:#363940;--soft:#1C1F25;
+ --green:#17271E;--green-ink:#9FD3B0;--pink:#2A1820;--pink-ink:#F2A9BC;
+ --stamp:#9DB2F2;--alert:#FF8A80;--cool:#8FB3F0;
+ --guil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='24'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.07' stroke-width='.7'%3E%3Cpath d='M0 12Q15 0 30 12T60 12T90 12T120 12'/%3E%3Cpath d='M0 12Q15 24 30 12T60 12T90 12T120 12'/%3E%3Cpath d='M0 6Q15 18 30 6T60 6T90 6T120 6'/%3E%3Cpath d='M0 18Q15 6 30 18T60 18T90 18T120 18'/%3E%3C/g%3E%3C/svg%3E");
+ color-scheme:dark}}
+:root[data-theme="dark"]{
+ --paper:#14161B;--ink:#ECEDEF;--ink2:#A7ABB3;--hair:#363940;--soft:#1C1F25;
+ --green:#17271E;--green-ink:#9FD3B0;--pink:#2A1820;--pink-ink:#F2A9BC;
+ --stamp:#9DB2F2;--alert:#FF8A80;--cool:#8FB3F0;
+ --guil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='24'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.07' stroke-width='.7'%3E%3Cpath d='M0 12Q15 0 30 12T60 12T90 12T120 12'/%3E%3Cpath d='M0 12Q15 24 30 12T60 12T90 12T120 12'/%3E%3Cpath d='M0 6Q15 18 30 6T60 6T90 6T120 6'/%3E%3Cpath d='M0 18Q15 6 30 18T60 18T90 18T120 18'/%3E%3C/g%3E%3C/svg%3E");
+ color-scheme:dark}
+
+*{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.55 var(--f-ui);font-variation-settings:"wdth" 100;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+::selection{background:var(--stamp);color:var(--paper)}
+:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--stamp);text-underline-offset:3px}
+*{scrollbar-color:var(--hair) transparent;scrollbar-width:thin}
+
+/* type: three sizes (13 / 15 / display), rank by weight, case and rule */
+.lab{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-variation-settings:"wdth" 75;color:var(--ink2)}
+.ur{font-family:var(--f-ur);font-weight:500;line-height:1.9;color:var(--ink2);font-size:13px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+h2{font-size:15px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;font-variation-settings:"wdth" 80;margin:0}
+.sub{color:var(--ink2);margin:4px 0 0;max-width:70ch;font-size:13.5px}
+.tint{background-color:var(--green);background-image:var(--guil)}
+.tint.p{background-color:var(--pink)}
+
+/* the sheet */
+.sheet{max-width:1240px;margin:0 auto;padding:clamp(12px,3vw,32px) clamp(16px,3vw,32px) 48px}
+.frame{border:1.5px solid var(--ink)}
+
+/* masthead */
+.mast{display:grid;grid-template-columns:minmax(260px,1.1fr) 1.4fr minmax(240px,1fr);border-bottom:1.5px solid var(--ink)}
+.mast>div{padding:18px 20px;min-width:0}
+.split>*,.adv>*,main,.frame{min-width:0}
+.mast>div+div{border-left:1px solid var(--ink)}
+.brand{display:flex;gap:14px;align-items:flex-start}
+.mark{width:44px;height:44px;flex:none;border:1.5px solid var(--ink);display:grid;place-items:center}
+.mark svg{width:24px;height:24px}
+.brand b{display:block;font-size:20px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;font-variation-settings:"wdth" 72;line-height:1.1}
+.brand .ur{font-size:16px;color:var(--ink);display:block;margin-top:2px;text-align:left}
+.brand small{display:block;color:var(--ink2);font-size:12.5px}
+.fields{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center}
+.fields .v{font-weight:600}
+.fields select{width:100%;max-width:280px;border:1px solid var(--ink);background:var(--paper);padding:6px 30px 6px 10px;border-radius:0;font-weight:600;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;background-size:5px 5px;background-repeat:no-repeat;cursor:pointer}
+.status{display:flex;flex-direction:column;gap:10px;position:relative}
+.status .row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;border-bottom:1px dotted var(--hair);padding-bottom:4px}
+.status .row span{color:var(--ink2)}
+.tools{display:flex;gap:8px;margin-top:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);background:var(--paper);padding:7px 12px;cursor:pointer;font-weight:600;font-size:13px;border-radius:0}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn.solid:hover{background:var(--stamp);border-color:var(--stamp)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:square}
+kbd{font:500 11px var(--f-num);border:1px solid currentColor;padding:0 4px;opacity:.75}
+.stampmark{position:absolute;right:16px;top:10px;border:2px solid var(--stamp);color:var(--stamp);padding:3px 10px 2px;font-weight:800;letter-spacing:.14em;font-size:13px;text-transform:uppercase;font-variation-settings:"wdth" 70;transform:rotate(-6deg);opacity:.85;pointer-events:none}
+.stampmark.bad{border-color:var(--alert);color:var(--alert)}
+
+/* tabs */
+nav{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1.5px solid var(--ink)}
+nav a{display:flex;flex-direction:column;gap:0;padding:10px 16px 6px;text-decoration:none;color:var(--ink)}
+nav a+a{border-left:1px solid var(--ink)}
+nav a b{font-size:13.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-variation-settings:"wdth" 78}
+nav a .ur{font-size:12px;line-height:1.8;text-align:right}
+nav a:hover{background:var(--soft)}
+nav a[aria-current=page]{background:var(--ink);color:var(--paper)}
+nav a[aria-current=page] .ur{color:var(--paper);opacity:.8}
+
+/* blocks */
+section.view{display:none}section.view.on{display:block}
+.blk{border-bottom:1px solid var(--ink);padding:20px}
+.blk:last-child{border-bottom:0}
+.bh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.bh .ur{font-size:13px}
+.split{display:grid;grid-template-columns:1.25fr 1fr}
+.split>.blk+.blk,.split>div+div{border-left:1px solid var(--ink)}
+.split>.blk{border-bottom:0}
+.splitwrap{border-bottom:1px solid var(--ink)}
+
+/* amount-payable box: the signature element */
+.pay{border:1.5px solid var(--ink);display:grid;grid-template-columns:1fr auto}
+.pay .l{padding:16px 18px}
+.pay .big{font:600 clamp(44px,6.4vw,76px)/1 var(--f-num);letter-spacing:-.05em;margin:8px 0 6px;display:block}
+.pay .big.print{animation:print .7s steps(14,end)}
+@keyframes print{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.pay .rng{font-size:13.5px;color:var(--ink2)}
+.pay .rng b{color:var(--ink);font-family:var(--f-num);font-weight:500;font-size:13px}
+.pay .r{border-left:1px solid var(--ink);display:flex;flex-direction:column;justify-content:center;padding:12px 18px;min-width:150px;background:var(--paper)}
+.pay .r .num{font-size:20px;font-weight:600;white-space:nowrap}
+.msg{margin-top:12px;font-weight:600;max-width:60ch}
+
+/* line items */
+.items{width:100%;border-collapse:collapse;font-size:14px}
+.items td,.items th{padding:9px 0;border-bottom:1px solid var(--hair);vertical-align:baseline;text-align:left}
+.items th{font:inherit}
+.items td.a{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:13.5px;white-space:nowrap;padding-left:12px}
+.items td small{display:block;color:var(--ink2);font-size:12.5px}
+.items tr.tot td{border-top:1.5px solid var(--ink);border-bottom:3px double var(--ink);font-weight:700;padding:11px 0}
+.items tr.tot td.a{font-size:15px;font-weight:600}
+
+/* consumption-history strip */
+.hist{display:grid;gap:0;border-top:1px solid var(--ink)}
+.hist a{display:grid;grid-template-columns:92px 1fr 64px 56px;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:13.5px}
+.hist a:hover{background:var(--soft)}
+.hist .bar{height:12px;position:relative;background:repeating-linear-gradient(90deg,var(--hair) 0 1px,transparent 1px 8px)}
+.hist .bar i{position:absolute;top:0;bottom:0;background:var(--ink)}
+.hist .bar i.hot{background:var(--alert)}
+.hist .num{text-align:right;font-size:13px}
+.hist .lo{color:var(--ink2)}
+.alert{display:none;border:1.5px solid var(--alert);color:var(--alert);padding:10px 14px;margin-bottom:14px;font-weight:600}
+
+/* tables */
+.tbl{overflow:auto;max-width:100%}
+table.data{border-collapse:collapse;width:100%;font-size:13.5px;min-width:620px}
+table.data th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink);white-space:nowrap;position:sticky;top:0;background:var(--paper);z-index:1}
+table.data td{padding:8px 10px;border-bottom:1px solid var(--hair);white-space:nowrap}
+table.data td.n,table.data td.m{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:12.5px}
+table.data tr:hover td{background:var(--soft)}
+table.data button{border:1px solid var(--ink);background:none;padding:3px 10px;cursor:pointer;font-size:12.5px;font-weight:600}
+table.data tr[aria-current] td{background:var(--green)}
+table.data tr[aria-current] button{background:var(--ink);color:var(--paper)}
+#v-warehouse table.data th{cursor:pointer}
+
+/* controls */
+.ctl{display:flex;gap:20px;flex-wrap:wrap;align-items:end;margin-bottom:14px}
+.ctl label{display:flex;flex-direction:column;gap:6px}
+.ctl .chk{flex-direction:row}
+.ctl select{border:1px solid var(--ink);background:var(--paper);padding:6px 10px;border-radius:0;font-weight:600}
+input[type=range]{accent-color:var(--ink);width:240px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--ink);flex-wrap:wrap}
+.seg button{border:0;background:none;padding:6px 12px;cursor:pointer;font-weight:600;font-size:13px}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointer}
+.chk input,.apps input[type=checkbox]{accent-color:var(--ink);width:15px;height:15px}
+.meters{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);margin-bottom:16px}
+.meters div{padding:10px 14px}
+.meters div+div{border-left:1px solid var(--ink)}
+.meters .num{display:block;font-size:20px;font-weight:600;margin-top:2px}
+.meters small{color:var(--ink2);font-size:12.5px}
+.cg{display:none;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));border-top:1px solid var(--ink);border-left:1px solid var(--ink)}
+.cg.on{display:grid}
+.cg div{border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:10px 12px}
+.cg .num{font-size:20px;font-weight:600;display:block}
+.cg small{color:var(--ink2);font-size:12.5px;display:block}
+
+/* chart */
+.chartwrap{position:relative;border:1px solid var(--ink);padding:10px 8px 4px}
+svg.chart{width:100%;height:auto;display:block;touch-action:pan-y;cursor:crosshair}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-top:10px}
+.legend i{display:inline-block;width:18px;height:0;border-top:2px solid;margin-right:7px;vertical-align:middle}
+.legend i.band{height:10px;border:1px solid var(--pink-ink);background:repeating-linear-gradient(135deg,var(--pink-ink) 0 1px,transparent 1px 4px);opacity:.7}
+.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--ink);padding:8px 10px;font-size:13px;line-height:1.5;display:none;white-space:nowrap;z-index:2}
+.tip .num{font-size:12.5px}
+#g3h,#g3{position:relative}
+#g3h{height:100%;min-height:300px}#g3{height:360px;border:1px solid var(--ink)}
+canvas{display:block;cursor:grab}canvas:active{cursor:grabbing}
+.ramp{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2)}
+.ramp i{display:inline-block;width:120px;height:8px;background:linear-gradient(90deg,var(--cool),#d9d6cf,var(--alert))}
+.hint3{position:absolute;left:12px;bottom:10px;font-size:12.5px;color:var(--ink2);pointer-events:none}
+
+/* bill */
+.opts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--ink)}
+.opts label{display:flex;gap:10px;padding:10px 12px;cursor:pointer;align-items:flex-start}
+.opts label:nth-child(even){border-left:1px solid var(--ink)}
+.opts label:nth-child(n+3){border-top:1px solid var(--ink)}
+.opts input{position:absolute;opacity:0}
+.opts .box{width:16px;height:16px;border:1.5px solid var(--ink);flex:none;margin-top:3px;display:grid;place-items:center}
+.opts label:has(input:checked){background:var(--green)}
+.opts label:has(input:checked) .box::after{content:"";width:8px;height:8px;background:var(--ink)}
+.opts label:has(input:focus-visible){outline:2px solid var(--stamp);outline-offset:-2px}
+.opts b{display:block;font-size:14px}.opts small{color:var(--ink2);font-size:12.5px}
+.apps{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.apps td{padding:7px 0;border-bottom:1px solid var(--hair)}
+.apps td+td{text-align:right}
+.apps label{display:flex;gap:10px;align-items:center;cursor:pointer}
+.apps input[type=number]{width:56px;border:1px solid var(--ink);background:var(--paper);padding:3px 6px;font-family:var(--f-num);font-size:12.5px;border-radius:0}
+.doc{border:1.5px solid var(--ink)}
+.doc header{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--ink);flex-wrap:wrap}
+.doc .body{padding:4px 16px 16px}
+.next{margin-top:12px;border:1px dashed var(--ink);padding:10px 12px;font-size:13.5px}
+.note{font-size:12.5px;color:var(--ink2);margin-top:10px;max-width:70ch}
+
+/* advisor */
+.adv{display:grid;grid-template-columns:300px 1fr}
+.adv>div+div{border-left:1px solid var(--ink)}
+.qs{display:flex;flex-direction:column}
+.qs button{text-align:left;border:0;border-bottom:1px solid var(--hair);background:none;padding:10px 0;cursor:pointer;font-weight:600;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.qs button:hover{color:var(--stamp)}
+.qs button::after{content:"→";color:var(--ink2)}
+.register{display:flex;flex-direction:column;max-height:560px;overflow:auto}
+.entry{padding:14px 0;border-bottom:1px solid var(--hair);display:grid;grid-template-columns:44px 1fr;gap:4px 12px}
+.entry .k{font-weight:800;font-size:12px;letter-spacing:.08em;font-variation-settings:"wdth" 70;padding-top:3px}
+.entry.q .t{font-weight:600}
+.entry .src{grid-column:2;display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:12.5px}
+.tag{border:1px solid currentColor;padding:1px 8px;font-weight:600}
+.tag.ok{color:var(--green-ink)}.tag.no{color:var(--alert)}.tag.web{color:var(--ink)}
+.entry .wsrc{grid-column:2;margin:6px 0 0;padding-left:18px;font-size:12.5px}.entry .wsrc li{margin:2px 0}.entry .wsrc small{color:var(--muted,inherit);opacity:.8}
+.md h3{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;margin:.9em 0 .3em;font-variation-settings:"wdth" 80}
+.md h3:first-child{margin-top:0}
+.md ul{margin:.3em 0;padding-left:1.1em}.md p{margin:.4em 0;max-width:72ch}.md li{margin:.2em 0}
+.md blockquote{margin:.5em 0;padding-left:.8em;border-left:1px solid var(--ink);color:var(--ink2)}
+.md em{color:var(--ink2)}
+.askbar{display:flex;border:1.5px solid var(--ink);margin-top:14px}
+.askbar input{flex:1;border:0;background:none;padding:11px 12px;outline:0;min-width:0}
+.askbar .btn{border:0;border-left:1.5px solid var(--ink)}
+.wait{color:var(--ink2);font-size:13.5px}
+.wait::after{content:"";display:inline-block;width:1ch;animation:dots 1.2s steps(4,end) infinite;overflow:hidden;vertical-align:bottom;white-space:pre}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+
+/* tear-off stub */
+.stub{margin-top:28px;border-top:1.5px dashed var(--ink);padding-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;font-size:13px;color:var(--ink2)}
+.stub b{display:block;color:var(--ink);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-variation-settings:"wdth" 75;margin-bottom:4px}
+.stub .cut{grid-column:1/-1;margin:-30px 0 0;display:flex;justify-content:center}
+.stub .cut span{background:var(--paper);padding:0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-variation-settings:"wdth" 75}
+
+details{margin-top:14px}
+summary{cursor:pointer;font-weight:700;font-size:13.5px}
+details p{color:var(--ink2);max-width:75ch;margin:8px 0 0}
+dialog{border:1.5px solid var(--ink);border-radius:0;padding:0;width:min(480px,92vw);background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:rgba(10,12,16,.45)}
+#cmdq{width:100%;border:0;border-bottom:1px solid var(--ink);padding:14px 16px;background:transparent;font-size:15px;outline:0}
+#cmdl{max-height:50vh;overflow:auto}
+#cmdl button{display:block;width:100%;border:0;border-bottom:1px solid var(--hair);background:none;padding:10px 16px;cursor:pointer;text-align:left}
+#cmdl button:hover,#cmdl button.on{background:var(--ink);color:var(--paper)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 16px;font-size:13.5px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none;z-index:5}
+.skel{color:var(--ink2)}
+
+@media (max-width:980px){
+ .mast{grid-template-columns:1fr 1fr}.mast>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--ink)}
+ .mast>div:nth-child(2){border-left:0}
+ .split,.adv{grid-template-columns:1fr}
+ .split>.blk+.blk,.split>div+div,.adv>div+div{border-left:0;border-top:1px solid var(--ink)}
+ .stub{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+ .mast{grid-template-columns:1fr}.mast>div+div{border-left:0;border-top:1px solid var(--ink)}
+ nav{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(120px,1fr);overflow-x:auto}
+ .blk{padding:16px}
+ .pay{grid-template-columns:1fr}.pay .r{border-left:0;border-top:1px solid var(--ink);flex-direction:row;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+ .meters{grid-template-columns:1fr 1fr}.meters div:nth-child(3){border-left:0}.meters div:nth-child(n+3){border-top:1px solid var(--ink)}
+ .opts{grid-template-columns:1fr}.opts label:nth-child(even){border-left:0}.opts label+label{border-top:1px solid var(--ink)}
+ .hist a{grid-template-columns:76px 1fr 52px 44px;gap:8px}
+ .stub{grid-template-columns:1fr}
+ .stampmark{position:static;align-self:flex-start;transform:rotate(-3deg)}
+}
+@media (prefers-reduced-motion:reduce){.pay .big.print{animation:none}.wait::after{animation:none;content:"..."}}
 </style>
 </head>
 <body>
-<div class="app">
-<aside>
- <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M13 2L5 14h6l-1 8 8-12h-6z"/></svg></div><div><b>Bijli-Insight</b><small>Pakistan energy intelligence</small></div><button class="btn ib" id="col" aria-label="Collapse sidebar" title="Collapse sidebar"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button></div>
- <nav id="nav" aria-label="Sections">
-  <a href="#health"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Overview</a>
-  <a href="#warehouse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.300 8-3V6M4 12c0 1.700 3.600 3 8 3s8-1.300 8-3"/></svg>Data explorer</a>
-  <a href="#forecast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 3 8-9"/><path d="M3 21h18"/></svg>7-day forecast</a>
-  <a href="#bill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>Bill calculator</a>
-  <a href="#policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.800 7L3 20l1.200-5.200A8 8 0 1 1 21 12z"/></svg>Policy assistant</a>
- </nav>
- <div class="grp"><h4>City / DISCO</h4>
-  <select id="city"><option>Karachi (K-Electric)</option><option>Lahore (LESCO)</option><option>Islamabad (IESCO)</option></select><div class="cinfo" id="cinfo"></div></div>
- <div class="grp"><h4>Consumer type</h4>
-  <div class="radio" id="tariff">
-   <label><input type="radio" name="t" value="prot" checked><span class="ri"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9H3z"/></svg></span><span><b>Protected</b><small>Home, up to 200 units</small></span></label>
-   <label><input type="radio" name="t" value="unprot"><span class="ri"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 10v10h14V10M12 13v4M10 15h4"/></svg></span><span><b>Unprotected</b><small>Home, over 200 units</small></span></label>
-   <label><input type="radio" name="t" value="a2"><span class="ri"><svg viewBox="0 0 24 24"><path d="M4 9l1-5h14l1 5M4 9v11h16V9M9 20v-6h6v6"/></svg></span><span><b>Commercial A-2</b><small>Shops and offices</small></span></label>
-   <label><input type="radio" name="t" value="ind"><span class="ri"><svg viewBox="0 0 24 24"><path d="M3 21V10l6 4v-4l6 4V6h6v15z"/></svg></span><span><b>Industrial</b><small>General industry</small></span></label>
-  </div></div>
- <div class="store"><b>Warehouse status</b><div class="lay"><span><i class="dot"></i>Raw</span><small>4 files</small></div><div class="lay"><span><i class="dot"></i>Silver</span><small>Cleaned</small></div><div class="lay" style="border:0"><span><i class="dot"></i>Gold</span><small>Features</small></div><small>DuckDB, all layers healthy</small></div>
-</aside>
+<!--
+THESIS: The forecast is issued as the one energy document every Pakistani household reads each month, the electricity bill; refuses the SaaS card dashboard and the neon control room.
+OWN-WORLD: Bill paper (#FCFCFA) ruled in 1.5px ink, security-tint guilloche fields in bill green (#DCEBD9) and pink (#F6DDE3), stamp blue (#233E8B) for actions and the rubber stamp, alert red (#B3261E) for heat. Archivo condensed caps for labels, Martian Mono tabular figures, Nastaliq Urdu bilingual headings. No cards, no shadows, no radii.
+STORY: A judge sees tomorrow's heat as an amount payable, traces it to its evidence (q10-q90 band, MAE vs t-168 baseline, SHA-256 sources) and acts on it: avoid 18:00-22:00, estimate the bill, ask policy.
+FIRST VIEWPORT: Masthead (brand + Urdu wordmark | consumer panel with city select | pipeline status with VERIFIED stamp), bilingual tabs, then the pink "Expected high" payable box at display scale beside the 3D hourly heat map, with the 7-day consumption-history strip beneath.
+FORM: The Monthly Bill, my top-ranked grounded candidate (IMPECCABLE'S PICK), seed key adba4bbb.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
+<div class="sheet">
+<div class="frame">
+
+<header class="mast">
+ <div class="brand">
+  <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2 5 13.5h6L10 22l9-12.5h-6.2z"/></svg></span>
+  <div><b>Bijli-Insight Pakistan</b><span class="ur" lang="ur" dir="rtl">بجلی بصیرت پاکستان</span><small>Heat and demand forecast · HackInsight 2026</small></div>
+ </div>
+ <div class="tint">
+  <div class="fields">
+   <span class="lab">City / DISCO</span>
+   <select id="city" aria-label="City and distribution company"><option>Karachi (K-Electric)</option><option>Lahore (LESCO)</option><option>Islamabad (IESCO)</option></select>
+   <span class="lab">Issued</span><span class="v num" id="issued">—</span>
+   <span class="lab">Sheet ref</span><span class="v num" id="ref">—</span>
+   <span class="lab">Model</span><span class="v">LightGBM quantile · q10 / q50 / q90</span>
+  </div>
+ </div>
+ <div class="status">
+  <span class="stampmark" id="stamp" hidden>Verified</span>
+  <span class="lab">Pipeline status</span>
+  <div class="row"><span>Last run</span><b class="num" id="sRun">—</b></div>
+  <div class="row"><span>Records in warehouse</span><b class="num" id="sRec">—</b></div>
+  <div class="row"><span>Data freshness</span><b class="num" id="sFresh">—</b></div>
+  <div class="tools">
+   <button class="btn" id="cmdk" title="Search (/ or Ctrl+K)"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>Search <kbd>/</kbd></button>
+   <button class="btn" id="theme" aria-label="Toggle light or dark theme"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg>Theme</button>
+  </div>
+ </div>
+</header>
+
+<nav id="nav" aria-label="Sections">
+ <a href="#health"><b>Overview</b><span class="ur" lang="ur">خلاصہ</span></a>
+ <a href="#forecast"><b>7-day forecast</b><span class="ur" lang="ur">پیشگوئی</span></a>
+ <a href="#bill"><b>Bill estimate</b><span class="ur" lang="ur">بل کا تخمینہ</span></a>
+ <a href="#policy"><b>Policy advisor</b><span class="ur" lang="ur">پالیسی</span></a>
+ <a href="#warehouse"><b>Data explorer</b><span class="ur" lang="ur">ڈیٹا</span></a>
+</nav>
 
 <main>
- <header class="top">
-  <div><h1>Bijli-Insight Pakistan</h1>
-   <div class="ur" lang="ur" dir="rtl">Ø¨Ø¬Ù„ÛŒ Ø¨ØµÛŒØ±Øª Ù¾Ø§Ú©Ø³ØªØ§Ù†</div>
-   <p>Temperature and electricity-demand forecasts for <b id="cityName">Karachi (K-Electric)</b>.</p></div>
-  <div class="pills"><span class="pill"><span class="dot"></span>Data synced 4 min ago</span><button class="btn" id="cmdk">Search <kbd>/</kbd></button><button class="btn" id="theme">Toggle theme</button></div>
- </header>
+<!-- OVERVIEW -->
+<section class="view" id="v-health">
+ <div class="splitwrap"><div class="split">
+  <div class="blk">
+   <div class="bh"><h2 id="heroT">Tomorrow</h2><span class="ur" lang="ur" dir="rtl">کل کا متوقع درجہ حرارت</span></div>
+   <div class="alert" id="alert" role="status"></div>
+   <div class="pay tint p">
+    <div class="l"><span class="lab">Expected high (q50)</span><span class="big" id="payBig">—</span><span class="rng" id="payRng">Fetching the forecast from the model…</span></div>
+    <div class="r"><span class="lab">Avoid heavy load</span><span class="num">18:00–22:00</span><small class="sub" style="margin:0">evening grid peak</small></div>
+   </div>
+   <p class="msg" id="payMsg"></p>
+   <table class="items" id="plan"><tbody><tr><td class="skel">Waiting for the forecast…</td></tr></tbody></table>
+  </div>
+  <div class="blk" style="padding:0;display:flex;flex-direction:column">
+   <div class="bh" style="padding:20px 20px 0;margin:0"><h2>Hourly heat, next 168 h</h2><span class="ramp"><span>cooler</span><i></i><span>hotter</span></span></div>
+   <div id="g3h" aria-label="3D heat map of the next 168 hours; drag to rotate" role="img"><span class="hint3">Each bar is one hour · drag to rotate</span></div>
+  </div>
+ </div></div>
 
- <section class="view" id="v-health">
-  <div class="alert" id="alert" role="status"></div>
-  <div class="herowrap"><div class="hero" id="hero"></div><div id="g3h" title="Drag to rotate"></div></div>
-  <h2 style="margin:0 0 10px">Plan tomorrow</h2><div class="slice" id="plan" style="margin:0 0 22px"></div>
-  <h2 style="margin:0 0 10px">Compare cities</h2><div class="cities" id="cities"></div>
-  <div class="kpis">
-   <div class="card kpi"><span class="ic">â±ï¸</span><small>Last data fetch</small><strong>4 min ago</strong><span class="tag">Within 60 min target</span></div>
-   <div class="card kpi"><span class="ic">ðŸŽ¯</span><small>Forecast error (MAE)</small><strong>0.42 Â°C</strong><span class="tag">38.2% better than baseline (0.68 Â°C)</span><svg viewBox="0 0 100 24" style="width:100%;height:28px;margin-top:10px" role="img" aria-label="Error falling over the last 7 days"><polyline points="0,7 16,11 33,13 50,15 66,17 83,19 100,20" fill="none" stroke="var(--pine)" stroke-width="2" stroke-linecap="round"/></svg><small>Error, last 7 days (lower is better)</small></div>
-   <div class="card kpi"><span class="ic">ðŸ›¡ï¸</span><small>Raw data dropped</small><strong>0</strong><span class="tag">Every issue was repaired or flagged</span></div>
-   <div class="card kpi"><span class="ic">ðŸ”„</span><small>Last sync</small><strong style="font-size:20px;margin-top:10px">21 Oct 2026, 08:37 UTC</strong></div>
-  </div>
-  <div class="row">
-   <div class="card"><h2>Data quality log</h2><p class="sub">What the pipeline did to each incoming record before it reached the models.</p>
-    <div class="steps"><div><span class="ic">ðŸ”§</span><b id="qFix">142</b><span>Fixed: wrong data types corrected</span></div><div><span class="ic">ðŸ§©</span><b>3</b><span>Filled: gaps estimated</span></div><div><span class="ic">ðŸš©</span><b>12</b><span>Flagged: odd values marked for review</span></div></div></div>
-   <div class="card"><h2>Model vs. baseline</h2><p class="sub">The baseline repeats last weekâ€™s temperature. Our quantile model beats it on the test set.</p>
-    <div class="line"><span>Quantile model</span><b>0.42 Â°C</b></div><div class="line"><span>Baseline (same hour, last week)</span><b>0.68 Â°C</b></div></div>
-  </div>
-  <div class="card tbl" style="margin-bottom:18px"><h2>Source files and integrity checks</h2><p class="sub">Each raw file is fingerprinted with SHA-256 so any change can be detected.</p>
-   <table><thead><tr><th>File</th><th>Source</th><th>Publisher</th><th>Fetched (UTC)</th></tr></thead><tbody id="manifest"></tbody></table></div>
-  <details><summary>Business model and value</summary><p>Utilities, businesses and households use short-range temperature forecasts to plan load and avoid surprise bills. Bijli-Insight turns open weather archives and published NEPRA tariffs into forecasts with an honest range, so planners can prepare for the worst case, not just the average.</p></details>
- </section>
+ <div class="blk">
+  <div class="bh"><h2>Consumption history, forward · next 7 days</h2><span class="lab">Daily high and low (q50) · tap a day</span></div>
+  <div class="hist" id="hist"></div>
+ </div>
 
- <section class="view" id="v-warehouse">
-  <div class="card">
-   <h2>Data explorer</h2><p class="sub">Browse the tables behind the forecasts for <b class="cn">Karachi (K-Electric)</b>.</p>
-   <div class="ctrl"><label>Table<select id="tbl"><option>gold_weather_features</option><option>silver_weather_clean</option><option>raw_open_meteo</option></select></label>
-    <label>Rows to show: <b id="limVal">25</b><input type="range" id="lim" min="5" max="250" value="25"></label></div>
-   <div class="seg" id="seg"><button aria-pressed="true" data-m="t" aria-label="Table view" title="Table view"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg></button><button aria-pressed="false" data-m="c" aria-label="Card view" title="Card view"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.500"/><rect x="14" y="3" width="7" height="7" rx="1.500"/><rect x="3" y="14" width="7" height="7" rx="1.500"/><rect x="14" y="14" width="7" height="7" rx="1.500"/></svg></button></div>
-   <div class="kpis" id="wkpi"></div>
-   <div class="cg" id="cg"></div><div class="tbl"><table><thead><tr><th>Time (PKT)</th><th>Temp Â°C</th><th>Humidity %</th><th>Wind km/h</th></tr></thead><tbody id="wrows"></tbody></table></div>
+ <div class="splitwrap"><div class="split">
+  <div class="blk">
+   <div class="bh"><h2>Forecast accuracy</h2><span class="lab">Held-out test set · 10,426 hours</span></div>
+   <table class="items"><tbody>
+    <tr><td>Quantile model, median (q50)<small>LightGBM, pinball loss</small></td><td class="a" id="aM">—</td></tr>
+    <tr><td>Declared baseline<small>Same hour last week, t − 168, declared before training</small></td><td class="a" id="aB">—</td></tr>
+    <tr class="tot"><td>Error reduction vs baseline</td><td class="a" id="aI">—</td></tr>
+   </tbody></table>
+   <p class="note">Mean absolute error in °C. Figures are read live from the pipeline's last run, not typed into this page.</p>
   </div>
- </section>
+  <div class="blk">
+   <div class="bh"><h2>Data quality agent</h2><span class="lab">Runs on every pipeline run on incoming records</span></div>
+   <table class="items"><tbody>
+    <tr><td><b>Fix</b><small>Wrong types and units corrected before storage</small></td></tr>
+    <tr><td><b>Fill</b><small>Short gaps interpolated and marked as estimated</small></td></tr>
+    <tr><td><b>Flag</b><small>Physically implausible values held for review, never dropped silently</small></td></tr>
+   </tbody></table>
+   <p class="note">Every decision is written to an audit log (<span class="num">quality_log.json</span>).</p>
+  </div>
+ </div></div>
 
- <section class="view" id="v-forecast">
-  <div class="card">
-   <h2>Temperature forecast, next 7 days</h2><p class="sub">The line is the most likely temperature. The shaded band is the range we expect 80% of the time.</p>
-   <div class="fctl"><div class="seg" id="fdays"></div><div class="fopts"><label class="chk"><input type="checkbox" id="oBand" checked>Range band</label><label class="chk"><input type="checkbox" id="oLines" checked>Low and high lines</label><label class="chk"><input type="checkbox" id="oPeak" checked>Evening peak</label><div class="seg" id="fu"><button aria-pressed="true" data-u="C">Â°C</button><button aria-pressed="false" data-u="F">Â°F</button></div></div></div>
-   <div class="fstats" id="fstats"></div>
-   <svg class="chart" id="chart" viewBox="0 0 900 320" role="img" aria-label="Seven day temperature forecast with uncertainty band"></svg><div class="tip" id="tip"></div>
-   <div class="legend"><span><i style="background:var(--blue)"></i>Low case (10th percentile)</span><span><i style="background:var(--pine)"></i>Expected (median)</span><span><i style="background:var(--amber)"></i>High case (90th percentile)</span></div>
-  </div>
-  <div class="card" style="margin-top:18px"><h2>Heat map in 3D</h2><p class="sub">Each bar is one hour of the next 7 days. Taller and redder means hotter. Drag to rotate.</p><div id="g3" style="height:360px;touch-action:none;cursor:grab"></div><div class="legend"><span><i style="background:hsl(216,75%,50%)"></i>Cooler</span><span><i style="background:hsl(100,75%,50%)"></i>Warm</span><span><i style="background:hsl(0,75%,50%)"></i>Hottest</span><span>Rows are days, columns are hours (00:00 to 23:00)</span></div></div>
-  <div class="slice">
-   <div class="card"><span class="ic">ðŸŒ†</span><small>Evening peak, 18:00 to 22:00</small><div class="big">0.28 Â°C</div><span class="sub">average error</span><div class="bar"><i style="width:41%"></i></div></div>
-   <div class="card"><span class="ic">ðŸŒ™</span><small>Off-peak hours</small><div class="big">0.34 Â°C</div><span class="sub">average error</span><div class="bar"><i style="width:50%"></i></div></div>
-   <div class="card"><span class="ic">ðŸ”¥</span><small>Heatwave days, 35 Â°C and above</small><div class="big">0.56 Â°C</div><span class="sub">average error</span><div class="bar"><i style="width:82%;background:var(--amber)"></i></div></div>
-  </div>
-  <p class="note">Accuracy is checked separately for peak hours, off-peak hours and heatwaves, so a good overall score cannot hide weak spots.</p>
- </section>
+ <div class="blk">
+  <div class="bh"><h2>Compare cities · tomorrow</h2><span class="lab">Live model output for all three DISCOs</span></div>
+  <div class="tbl"><table class="data"><thead><tr><th>City</th><th>DISCO</th><th>Expected high</th><th>Range (q10–q90)</th><th>Hottest hour</th><th></th></tr></thead><tbody id="cities"><tr><td colspan="6" class="skel">Loading three forecasts…</td></tr></tbody></table></div>
+ </div>
 
- <section class="view" id="v-bill">
-  <div class="bill">
-   <div class="card"><h2>Estimate your bill</h2><p class="sub">Drag to set monthly usage. The estimate uses the consumer type chosen on the left.</p>
-    <div class="ctrl"><label style="width:100%">Monthly usage: <b id="uVal">250</b> units (kWh)<input type="range" id="units" min="0" max="1000" value="250"></label></div>
-    <h2 style="font-size:15px;margin-top:6px">Not sure of your usage? Pick your appliances</h2><div id="apps"></div><button class="btn p" id="useApps" style="margin:12px 0 16px">Use this estimate</button>
-    <div class="pill" id="typeLbl">Protected residential</div>
-    <p class="note">Rates below are placeholders for the demo. Connect your NEPRA tariff table for real figures.</p></div>
-   <div class="card"><small>Estimated monthly bill</small><div class="big" id="total">Rs 0</div>
-    <div id="lines"></div></div>
-  </div>
- </section>
+ <div class="blk">
+  <div class="bh"><h2>Source files and integrity</h2><span class="lab">SHA-256 re-verified on every warehouse build</span></div>
+  <div class="tbl"><table class="data"><thead><tr><th>File</th><th>Publisher</th><th>Licence</th><th>Rows</th><th>SHA-256</th><th>Fetched (UTC)</th></tr></thead><tbody id="manifest"><tr><td colspan="6" class="skel">Loading manifest…</td></tr></tbody></table></div>
+  <details><summary>Why this matters</summary><p>Utilities, businesses and households plan load and budgets around short-range heat. Bijli-Insight turns open weather archives and published NEPRA tariffs into forecasts with an honest range, so planners prepare for the worst case, not only the average, and every number can be traced back to a fingerprinted source file.</p></details>
+ </div>
+</section>
 
- <section class="view" id="v-policy">
-  <div class="card pa"><div class="pah"><span class="av">AI</span><div><h2>Policy and conservation advisor</h2><small>Grounded in NEECA ECBC-2023 and NEPRA tariff schedules. Every answer names its source.</small></div><button class="btn ib" id="clr" title="Clear chat" aria-label="Clear chat"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>
-   <div class="chat" id="chat"><div class="msg b"><span class="av s">AI</span><div class="bb">Hello. Ask about tariffs, net metering or ways to cut your bill. I name the document each answer comes from.</div></div></div>
-   <div class="topics" id="sugg"><button><b>NEECA 26 Â°C AC rule</b><small>What is the NEECA 26 Â°C AC rule?</small></button><button><b>Protected consumer slabs</b><small>What are the protected consumer slabs?</small></button><button><b>Peak hour surcharge avoidance</b><small>How do I avoid peak hour surcharges?</small></button><button><b>Commercial charges</b><small>What are the per unit charges for commercial units?</small></button></div>
-   <div class="ask"><input id="q" placeholder="Ask about tariffs, net metering or savings" aria-label="Question"><button class="btn p ib" id="send" aria-label="Send" title="Send"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7z"/></svg></button></div></div>
- </section>
+<!-- FORECAST -->
+<section class="view" id="v-forecast">
+ <div class="blk">
+  <div class="bh"><div><h2>Temperature forecast · next 7 days</h2><p class="sub">The solid line is the most likely temperature (q50). The hatched band is the range expected 80% of the time (q10 to q90).</p></div><span class="ur" lang="ur" dir="rtl">سات دن کی پیشگوئی</span></div>
+  <div class="ctl" style="justify-content:space-between">
+   <div class="seg" id="fdays" role="group" aria-label="Range"></div>
+   <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+    <label class="chk"><input type="checkbox" id="oBand" checked>Range band</label>
+    <label class="chk"><input type="checkbox" id="oLines" checked>q10 / q90 lines</label>
+    <label class="chk"><input type="checkbox" id="oPeak" checked>Evening peak</label>
+    <div class="seg" id="fu" role="group" aria-label="Units"><button aria-pressed="true" data-u="C">°C</button><button aria-pressed="false" data-u="F">°F</button></div>
+   </div>
+  </div>
+  <div class="meters" id="fstats"></div>
+  <div class="chartwrap"><svg class="chart" id="chart" viewBox="0 0 900 320" role="img" aria-label="Seven day temperature forecast with uncertainty band"></svg><div class="tip" id="tip"></div></div>
+  <div class="legend"><span><i style="border-color:var(--ink)"></i>Expected (q50)</span><span><i class="band"></i>80% range</span><span><i style="border-color:var(--cool)"></i>Low case (q10)</span><span><i style="border-color:var(--alert)"></i>High case (q90)</span><span><i style="border-color:var(--alert);border-top-style:dashed"></i>Heatwave 35 °C</span></div>
+ </div>
+ <div class="blk">
+  <div class="bh"><h2>Heat map in 3D</h2><span class="ramp"><span>cooler</span><i></i><span>hotter</span></span></div>
+  <p class="sub" style="margin:-6px 0 12px">Each bar is one hour; rows are days, columns are hours 00:00 to 23:00. Taller and redder means hotter. Drag to rotate.</p>
+  <div id="g3" style="touch-action:none"></div>
+ </div>
+</section>
+
+<!-- BILL -->
+<section class="view" id="v-bill">
+ <div class="split">
+  <div class="blk">
+   <div class="bh"><h2>Consumer details</h2><span class="ur" lang="ur" dir="rtl">صارف کی تفصیل</span></div>
+   <div class="opts" id="tariff" role="radiogroup" aria-label="Consumer type">
+    <label><input type="radio" name="t" value="prot" checked><span class="box"></span><span><b>Protected</b><small>Home, up to 200 units</small></span></label>
+    <label><input type="radio" name="t" value="unprot"><span class="box"></span><span><b>Unprotected</b><small>Home, over 200 units</small></span></label>
+    <label><input type="radio" name="t" value="a2"><span class="box"></span><span><b>Commercial A-2</b><small>Shops and offices</small></span></label>
+    <label><input type="radio" name="t" value="ind"><span class="box"></span><span><b>Industrial</b><small>General industry</small></span></label>
+   </div>
+   <div class="ctl" style="margin:18px 0 6px"><label><span class="lab">Monthly usage · <b class="num" id="uVal">250</b> units (kWh)</span><input type="range" id="units" min="0" max="1000" value="250" aria-label="Monthly units"></label></div>
+   <h2 style="margin-top:18px">Not sure? Build it from appliances</h2>
+   <table class="apps" id="apps"></table>
+   <button class="btn solid" id="useApps" style="margin-top:12px">Use this estimate</button>
+  </div>
+  <div class="blk">
+   <div class="doc">
+    <header><div><span class="lab">Electricity bill estimate</span><div class="ur" lang="ur" dir="rtl" style="color:var(--ink)">بجلی کے بل کا تخمینہ</div></div><div style="text-align:right"><span class="lab">DISCO</span><div style="font-weight:700" class="cn">Karachi (K-Electric)</div><small class="sub" id="typeLbl" style="margin:0">Protected residential</small></div></header>
+    <div class="body">
+     <table class="items"><tbody id="lines"></tbody></table>
+     <div class="pay tint p" style="margin-top:16px">
+      <div class="l"><span class="lab">Estimated amount payable</span><span class="big" id="total" style="font-size:clamp(36px,5vw,56px)">Rs 0</span><span class="rng">For <b class="num" id="uVal2">250</b> units this month</span></div>
+     </div>
+     <div id="nextBand"></div>
+    </div>
+   </div>
+   <p class="note">Slab rates are NEPRA 2024 schedules, loaded live from the backend. Taxes and surcharges are approximated at 17%; your DISCO's bill will differ in fixed charges.</p>
+  </div>
+ </div>
+</section>
+
+<!-- POLICY -->
+<section class="view" id="v-policy">
+ <div class="adv">
+  <div class="blk">
+   <div class="bh"><h2>Ask the advisor</h2><span class="ur" lang="ur" dir="rtl">مشیر سے پوچھیں</span></div>
+   <p class="sub" style="margin:0 0 12px">Answers come only from NEECA and NEPRA documents, with the document and page cited. If the documents do not cover it, the advisor says so.</p>
+   <div class="qs" id="sugg">
+    <button>How much can my bill increase if I consume an additional 100 units?</button>
+    <button>What consumer complaint mechanisms are available for electricity-related disputes?</button>
+    <button>How does NEPRA regulate electricity tariffs?</button>
+   </div>
+  </div>
+  <div class="blk">
+   <div class="bh"><h2>Advisory register</h2><button class="btn" id="clr">Clear</button></div>
+   <div class="register" id="chat" aria-live="polite"><div class="entry"><span class="k">NOTE</span><div class="t sub" style="margin:0">Ask a question, or pick one on the left. The first answer after the server has been idle can take up to a minute.</div></div></div>
+   <div class="askbar"><input id="q" placeholder="Ask about tariffs, efficiency standards or savings" aria-label="Question"><button class="btn solid" id="send">Ask</button></div>
+  </div>
+ </div>
+</section>
+
+<!-- DATA EXPLORER -->
+<section class="view" id="v-warehouse">
+ <div class="blk">
+  <div class="bh"><div><h2>Data explorer</h2><p class="sub">The warehouse rows behind the forecasts for <b class="cn">Karachi (K-Electric)</b>.</p></div><span class="ur" lang="ur" dir="rtl">ڈیٹا گودام</span></div>
+  <div class="ctl">
+   <label><span class="lab">Table</span><select id="tbl"><option>gold_weather_features</option><option>silver_weather_clean</option><option>raw_open_meteo</option><option value="quality_log">quality_log.json (DQA audit)</option></select></label>
+   <label><span class="lab">Rows · <b class="num" id="limVal">25</b></span><input type="range" id="lim" min="5" max="250" value="25"></label>
+   <div class="seg" id="seg" role="group" aria-label="View"><button aria-pressed="true" data-m="t">Table</button><button aria-pressed="false" data-m="c">Readings</button></div>
+  </div>
+  <div class="meters" id="wkpi"></div>
+  <div class="cg" id="cg"></div>
+  <div class="tbl" id="wtbl" style="max-height:520px"><table class="data"><thead><tr><th>Time (PKT)</th><th>Temp °C</th><th>Humidity %</th><th>Wind km/h</th></tr></thead><tbody id="wrows"><tr><td colspan="4" class="skel">Loading rows…</td></tr></tbody></table></div>
+ </div>
+</section>
 </main>
 </div>
 
-<dialog id="cmd"><input id="cmdq" placeholder="Go to a page, switch city, or toggle theme" aria-label="Search commands"><div id="cmdl"></div></dialog>
+<footer class="stub">
+ <div class="cut"><span>Provenance · keep for your records</span></div>
+ <div><b>Weather</b>Open-Meteo / PMD archive, 2024–2025, CC-BY 4.0. Three cities, hourly.</div>
+ <div><b>Tariffs</b>NEPRA 2024 residential, commercial and industrial slabs.</div>
+ <div><b>Policy</b>NEECA National Energy Policy 2022 and residential ECBC, indexed for retrieval.</div>
+ <div><b>Pipeline</b>DuckDB raw → silver → gold, Prefect hourly flow, SHA-256 tamper checks. <a href="https://bijli-insight-api.onrender.com/health" id="apiLink">API status</a></div>
+</footer>
+</div>
+
+<dialog id="cmd"><input id="cmdq" placeholder="Go to a section, switch city, or toggle theme" aria-label="Search commands"><div id="cmdl"></div></dialog>
 <div class="toast" id="toast" role="status"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script>
-const $=s=>document.querySelector(s);
-const API='http://localhost:8000';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const API=(['localhost','127.0.0.1',''].includes(location.hostname))?'http://localhost:8000':'https://bijli-insight-api.onrender.com';
+$('#apiLink').href=API+'/health';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=h=>String(h).padStart(2,'0')+':00';
+const CODES=['KHI','LHE','ISB'];
+// forecast hour 0 is today 00:00 in Pakistan time
+const TZ='Asia/Karachi',now=new Date();
+const dayName=k=>k===0?'Today':k===1?'Tomorrow':new Date(now.getTime()+k*864e5).toLocaleDateString('en-GB',{weekday:'short',timeZone:TZ});
+const dayShort=k=>new Date(now.getTime()+k*864e5).toLocaleDateString('en-GB',{weekday:'short',timeZone:TZ});
+const ymd=new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(now);
+$('#issued').textContent=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:TZ});
+
 let rates={prot:[[100,16.48],[200,22.95]],unprot:[[300,34.26],[700,42.12],[1e9,48.84]],a2:[[1e9,42]],ind:[[1e9,36]]};
 const typeName={prot:'Protected residential',unprot:'Unprotected residential',a2:'Commercial A-2',ind:'General industrial'};
 fetch(`${API}/api/tariffs`).then(r=>r.json()).then(t=>{rates=t;bill()}).catch(()=>{});
-fetch(`${API}/api/manifest`).then(r=>r.json()).then(files=>{$('#manifest').innerHTML=files.map(f=>`<tr><td class="m">${f.filename}</td><td>${f.source_url||''}</td><td>${f.publisher||''}</td><td class="m">${(f.fetch_timestamp_utc||'').slice(0,19)}</td></tr>`).join('')}).catch(()=>{});
-fetch(`${API}/api/status`).then(r=>r.json()).then(s=>{const qs=$('#qFix');if(qs)qs.textContent=s.fixed||142}).catch(()=>{});
+fetch(`${API}/api/manifest`).then(r=>r.json()).then(files=>{$('#manifest').innerHTML=files.map(f=>`<tr><td class="m">${esc(f.filename)}</td><td>${esc(f.publisher)}</td><td>${esc(f.licence)}</td><td class="n">${f.row_count?(+f.row_count).toLocaleString():'—'}</td><td class="m" title="${esc(f.sha256_hash)}">${esc((f.sha256_hash||'').slice(0,12))}…</td><td class="m">${esc((f.fetch_timestamp_utc||'').slice(0,16).replace('T',' '))}</td></tr>`).join('')}).catch(()=>{$('#manifest').innerHTML='<tr><td colspan="6">Manifest unavailable. The backend may be waking up; refresh in a minute.</td></tr>'});
+fetch(`${API}/api/status`).then(r=>r.json()).then(s=>{
+ $('#sRun').textContent=s.last_run_utc||'no run yet';$('#sRec').textContent=(+s.active_records_count).toLocaleString();$('#sFresh').textContent=s.data_freshness_minutes!=null?s.data_freshness_minutes+' min':'—';
+ const st=$('#stamp');st.hidden=false;st.textContent=s.status==='SUCCESS'?'Verified':s.status;st.classList.toggle('bad',s.status!=='SUCCESS');
+ if(s.model_mae==null)return;$('#aM').textContent=(+s.model_mae).toFixed(4)+' °C';$('#aB').textContent=(+s.baseline_mae).toFixed(4)+' °C';$('#aI').textContent=(+s.improvement_pct).toFixed(1)+'%';
+}).catch(()=>{$('#sRun').textContent='unreachable'});
 
-// routing via bare hash tokens
+// routing
 const views=['health','warehouse','forecast','bill','policy'];
-function route(){const h=(location.hash||'#health').slice(1);const v=views.includes(h)?h:'health';
+function route(){const h=(location.hash||'#health').slice(1),v=views.includes(h)?h:'health';
  views.forEach(x=>$('#v-'+x).classList.toggle('on',x===v));window.vh=v==='health';window.vis=vh||v==='forecast';if(window.vis&&window.F)g3();
- document.querySelectorAll('#nav a').forEach(a=>a.toggleAttribute('aria-current',a.hash==='#'+v)||a.removeAttribute('aria-current'));
- document.querySelectorAll('#nav a').forEach(a=>{if(a.hash==='#'+v)a.setAttribute('aria-current','page')});}
+ $$('#nav a').forEach(a=>a.hash==='#'+v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'))}
 addEventListener('hashchange',route);route();
 
-$('#city').onchange=e=>{$('#cityName').textContent=e.target.value;document.querySelectorAll('.cn').forEach(n=>n.textContent=e.target.value);loadForecast();loadWeather();cities();toast('Showing '+e.target.value)};
+function setRef(){$('#ref').textContent=`BI-${CODES[$('#city').selectedIndex]}-${ymd.replaceAll('-','')}`}
+setRef();
+$('#city').onchange=e=>{$$('.cn').forEach(n=>n.textContent=e.target.value);setRef();loadForecast();loadWeather();markCity();toast('Showing '+e.target.value)};
 
-// theme
-$('#theme').onclick=()=>{const d=matchMedia('(prefers-color-scheme:dark)').matches;const cur=document.documentElement.dataset.theme||(d?'dark':'light');document.documentElement.dataset.theme=cur==='dark'?'light':'dark'};
+$('#theme').onclick=()=>{const d=matchMedia('(prefers-color-scheme:dark)').matches,cur=document.documentElement.dataset.theme||(d?'dark':'light');document.documentElement.dataset.theme=cur==='dark'?'light':'dark';if(window.F){draw();g3(true)}};
 
-// warehouse
-async function loadWeather(){
- const city=$('#city').value,table=$('#tbl').value,limit=$('#lim').value;
- $('#limVal').textContent=limit;
+// data explorer
+const WHEAD='<tr><th>Time (PKT)</th><th>Temp °C</th><th>Humidity %</th><th>Wind km/h</th></tr>';
+async function loadQualityLog(limit){
+ $('#v-warehouse thead').innerHTML='<tr><th>Time (PKT)</th><th>Action</th><th>Column · rows</th><th>Rationale</th></tr>';
  try{
-  const r=await fetch(`${API}/api/weather?city=${encodeURIComponent(city)}&table=${encodeURIComponent(table)}&limit=${limit}`);
-  const data=await r.json();
+  const log=await (await fetch(`${API}/api/quality_log?limit=${limit}`)).json();
+  const fmt=ts=>new Date(ts).toLocaleString('en-GB',{timeZone:TZ,day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  $('#wrows').innerHTML=log.length?log.map(r=>`<tr><td class="m">${fmt(r.timestamp_utc)}</td><td><b>${esc(r.action_taken)}</b></td><td class="m">${esc(r.column_name)} · ${+r.affected_rows_count}</td><td>${esc(r.rationale)}</td></tr>`).join('')
+   :'<tr><td colspan="4">No decisions logged yet: every incoming record so far passed the FIX, FILL and FLAG checks unchanged.</td></tr>';
+  $('#cg').innerHTML=log.map(r=>`<div><small>${fmt(r.timestamp_utc)}</small><span class="num">${esc(r.action_taken)}</span><small>${esc(r.column_name)} · ${esc(r.rationale)}</small></div>`).join('');
+  const n=a=>log.filter(r=>r.action_taken===a).length;
+  $('#wkpi').innerHTML=[['Decisions shown',log.length],['Fix',n('FIX')],['Fill',n('FILL')],['Flag',n('FLAG')]].map(k=>`<div><small>${k[0]}</small><span class="num">${k[1]}</span></div>`).join('');
+ }catch(e){$('#wrows').innerHTML='<tr><td colspan="4">Audit log unreachable. The backend may be waking up; try again in a minute.</td></tr>'}
+}
+async function loadWeather(){
+ const city=$('#city').value,table=$('#tbl').value,limit=$('#lim').value;$('#limVal').textContent=limit;
+ if(table==='quality_log')return loadQualityLog(limit);
+ $('#v-warehouse thead').innerHTML=WHEAD;
+ try{
+  const data=await (await fetch(`${API}/api/weather?city=${encodeURIComponent(city)}&table=${encodeURIComponent(table)}&limit=${limit}`)).json();
   let out='',cards='';
-  data.rows.forEach(row=>{
-   const hr=new Date(row.time).getHours();
-   out+=`<tr><td class="m">${String(hr).padStart(2,'0')}:00</td><td><span class="dotc" style="background:${hc(row.temp)}"></span>${row.temp}</td><td><span class="mb"><i style="width:${row.humidity}%"></i></span>${row.humidity}</td><td>${row.wind}</td></tr>`;
-   cards+=`<div style="border-top:3px solid ${hc(row.temp)}"><small>${String(hr).padStart(2,'0')}:00</small><b style="display:block;font-size:22px">${row.temp}Â°</b><span class="mb" style="width:100%;margin:4px 0"><i style="width:${row.humidity}%"></i></span><small>${row.humidity}% humidity, ${row.wind} km/h</small></div>`;
-  });
-  $('#wrows').innerHTML=out;$('#cg').innerHTML=cards;
-  const s=data.stats;
-  $('#wkpi').innerHTML=[['Rows inspected',data.rows.length],['Average temperature',s.avg_temp+' Â°C'],['Highest temperature',s.max_temp+' Â°C'],['Average humidity',s.avg_humidity+' %']].map(k=>`<div class="card kpi"><small>${k[0]}</small><strong>${k[1]}</strong></div>`).join('');
- }catch(e){console.error('Weather API error',e)}
+  data.rows.forEach(row=>{const t=new Date(row.time).toLocaleString('en-GB',{timeZone:TZ,day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+   out+=`<tr><td class="m">${t}</td><td class="n" style="color:${row.temp>=35?'var(--alert)':'inherit'}">${row.temp}</td><td class="n">${row.humidity}</td><td class="n">${row.wind}</td></tr>`;
+   cards+=`<div><small>${t}</small><span class="num">${row.temp}°</span><small>${row.humidity}% humidity · ${row.wind} km/h</small></div>`});
+  $('#wrows').innerHTML=out;$('#cg').innerHTML=cards;const s=data.stats;
+  $('#wkpi').innerHTML=[['Rows shown',data.rows.length],['Average temp, all rows',s.avg_temp+' °C'],['Highest recorded',s.max_temp+' °C'],['Average humidity',s.avg_humidity+' %']].map(k=>`<div><small>${k[0]}</small><span class="num">${k[1]}</span></div>`).join('');
+ }catch(e){$('#wrows').innerHTML='<tr><td colspan="4">Warehouse unreachable. The backend may be waking up; try again in a minute.</td></tr>'}
 }
 $('#lim').oninput=loadWeather;$('#tbl').onchange=loadWeather;loadWeather();
+$('#seg').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));const c=b.dataset.m==='c';$('#cg').classList.toggle('on',c);$('#wtbl').style.display=c?'none':''};
+$('#v-warehouse thead').onclick=e=>{const th=e.target.closest('th');if(!th)return;const i=th.cellIndex,d=th.dataset.d==='a'?-1:1;th.dataset.d=d>0?'a':'d';const tb=$('#wrows');[...tb.rows].sort((a,b)=>{const x=a.cells[i].textContent,y=b.cells[i].textContent;return d*(isNaN(x)||isNaN(y)?x.localeCompare(y):x-y)}).forEach(r=>tb.appendChild(r))};
 
 // forecast
 var R=[0,167],LY={band:1,lines:1,peak:1},U='C';
-function cv(v){return U==='F'?v*1.8+32:v}
+const cv=v=>U==='F'?v*1.8+32:v;
 function sm(p){let d='M'+p[0][0].toFixed(1)+' '+p[0][1].toFixed(1);for(let i=0;i<p.length-1;i++){const a=p[i-1]||p[i],b=p[i],c=p[i+1],e=p[i+2]||c;d+='C'+(b[0]+(c[0]-a[0])/6).toFixed(1)+' '+(b[1]+(c[1]-a[1])/6).toFixed(1)+' '+(c[0]-(e[0]-b[0])/6).toFixed(1)+' '+(c[1]-(e[1]-b[1])/6).toFixed(1)+' '+c[0].toFixed(1)+' '+c[1].toFixed(1)}return d}
+const dmax=(a,k)=>Math.max(...a.slice(k*24,k*24+24)),dmin=(a,k)=>Math.min(...a.slice(k*24,k*24+24));
 
 async function loadForecast(){
- const city=$('#city').value;
- try{
-  const r=await fetch(`${API}/api/forecast?city=${encodeURIComponent(city)}`);
-  const data=await r.json();
-  window.F={lo:data.lo,md:data.md,hi:data.hi};
- }catch(e){
-  // fallback to sine-wave demo if API unreachable
-  const s=$('#city').selectedIndex*3,lo=[],md=[],hi=[];
-  for(let i=0;i<168;i++){const hr=i%24,m=29-s/2+5*Math.sin((hr-9)/24*6.28)+Math.sin(i/40)*1.2,sp=.8+i/168*2.2;lo.push(m-sp);md.push(m);hi.push(m+sp)}
-  window.F={lo,md,hi};
- }
+ const city=$('#city').value;$('#payBig').textContent='—';$('#payRng').textContent='Fetching the forecast from the model… the first request after idle can take ~50 s.';
+ try{const r=await fetch(`${API}/api/forecast?city=${encodeURIComponent(city)}`);if(!r.ok)throw 0;const d=await r.json();window.F={lo:d.lo,md:d.md,hi:d.hi}}
+ catch(e){window.F=null;$('#payRng').textContent='Forecast unavailable: the backend did not respond. Refresh in a minute.';$('#plan').innerHTML='';$('#hist').innerHTML='';$('#chart').innerHTML='';return}
  draw();hero();g3();
 }
 
-function draw(){if(!window.F)return;const W=900,H=320,L=40,B=30,T=10;
+function draw(){if(!window.F)return;const W=900,H=320,L=40,T=10,css=getComputedStyle(document.documentElement),col=n=>css.getPropertyValue(n).trim();
  const r0=R[0],r1=R[1],n=r1-r0,idx=[];for(let i=r0;i<=r1;i++)idx.push(i);
  const x=i=>L+(i-r0)/n*(W-L-8),vs=idx.flatMap(i=>[cv(F.hi[i]),cv(F.lo[i])]).concat(cv(35)),a=Math.floor(Math.min(...vs)/5)*5,b=Math.ceil(Math.max(...vs)/5)*5,
- yd=v=>T+(b-v)/(b-a)*(H-T-30),y=v=>yd(cv(v)),dn=['Wed','Thu','Fri','Sat','Sun','Mon','Tue'],P=arr=>idx.map(i=>[x(i),y(arr[i])]);
- let g='<defs><linearGradient id="bgd" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--amber);stop-opacity:.3"/><stop offset="1" style="stop-color:var(--blue);stop-opacity:.22"/></linearGradient></defs>';
- for(let v=a;v<=b;v+=5)g+=`<line x1="${L}" x2="${W-8}" y1="${yd(v)}" y2="${yd(v)}" stroke="var(--line)"/><text x="${L-8}" y="${yd(v)+4}" text-anchor="end" font-size="11" fill="var(--mute)">${v}Â°</text>`;
+ yd=v=>T+(b-v)/(b-a)*(H-T-30),y=v=>yd(cv(v)),P=arr=>idx.map(i=>[x(i),y(arr[i])]);
+ let g=`<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${col('--pink-ink')}" stroke-width="1" opacity=".55"/></pattern></defs>`;
+ for(let v=a;v<=b;v+=5)g+=`<line x1="${L}" x2="${W-8}" y1="${yd(v)}" y2="${yd(v)}" stroke="var(--hair)"/><text x="${L-8}" y="${yd(v)+4}" text-anchor="end" font-size="11" font-family="Martian Mono,monospace" fill="var(--ink2)">${v}°</text>`;
  for(let d=Math.floor(r0/24);d<=Math.floor(r1/24);d++){
-  if(LY.peak){const p0=Math.max(r0,d*24+18),p1=Math.min(r1,d*24+22);if(p1>p0)g+=`<rect x="${x(p0)}" y="${T}" width="${x(p1)-x(p0)}" height="${H-T-30}" fill="var(--amber)" opacity=".1"/>`+(n<=48?`<text x="${(x(p0)+x(p1))/2}" y="${T+14}" text-anchor="middle" font-size="11" fill="var(--amber)">Evening peak</text>`:'')}
-  if(n>48){if(d>0)g+=`<line x1="${x(d*24)}" x2="${x(d*24)}" y1="${T}" y2="${H-30}" stroke="var(--line)" stroke-dasharray="2 4"/>`;g+=`<text x="${x(d*24+11.5)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mute)">${dn[d]}</text>`}
-  else for(let h=0;h<24;h+=3){const i=d*24+h;if(i>=r0&&i<=r1)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mute)">${String(h).padStart(2,'0')}:00</text>`}}
- g+=`<line x1="${L}" x2="${W-8}" y1="${y(35)}" y2="${y(35)}" stroke="var(--amber)" stroke-dasharray="4 4"/><text x="${W-12}" y="${y(35)-5}" text-anchor="end" font-size="11" fill="var(--amber)">Heatwave threshold ${cv(35).toFixed(0)}Â°</text>`;
- if(LY.band){const up=P(F.hi),dw=P(F.lo).reverse();g+=`<path d="${sm(up)}${sm(dw).replace('M','L')}Z" fill="url(#bgd)"/>`}
- if(LY.lines)g+=`<path d="${sm(P(F.lo))}" fill="none" stroke="var(--blue)" stroke-width="1.5"/><path d="${sm(P(F.hi))}" fill="none" stroke="var(--amber)" stroke-width="1.5"/>`;
- g+=`<path d="${sm(P(F.md))}" fill="none" stroke="var(--pine)" stroke-width="2.5" stroke-linecap="round"/>`;
- for(let d=Math.floor(r0/24);d<=Math.floor(r1/24);d++){let bi=-1;for(let i=Math.max(r0,d*24);i<=Math.min(r1,d*24+23);i++)if(bi<0||F.md[i]>F.md[bi])bi=i;g+=`<circle cx="${x(bi)}" cy="${y(F.md[bi])}" r="4" fill="var(--pine)" stroke="var(--panel)" stroke-width="2"/><text x="${x(bi)}" y="${y(F.md[bi])-10}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">${cv(F.md[bi]).toFixed(0)}Â°</text>`}
- const mm=idx.map(i=>F.md[i]),mx=Math.max(...mm),mn=Math.min(...mm),av=mm.reduce((p,c)=>p+c,0)/mm.length,hh=mm.filter(v=>v>=35).length,u='Â°'+U,at=i=>dn[Math.floor(i/24)]+' '+String(i%24).padStart(2,'0')+':00';
- $('#fstats').innerHTML=[['Hottest',cv(mx).toFixed(1)+u,at(r0+mm.indexOf(mx))],['Coolest',cv(mn).toFixed(1)+u,at(r0+mm.indexOf(mn))],['Average',cv(av).toFixed(1)+u,''],['Heatwave hours',hh,'at 35 Â°C or above']].map(k=>`<div><small>${k[0]}</small><b>${k[1]}</b><span>${k[2]}</span></div>`).join('');
+  if(LY.peak){const p0=Math.max(r0,d*24+18),p1=Math.min(r1,d*24+22);if(p1>p0)g+=`<rect x="${x(p0)}" y="${T}" width="${x(p1)-x(p0)}" height="${H-T-30}" fill="var(--green)"/>`+(n<=48?`<text x="${(x(p0)+x(p1))/2}" y="${T+14}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--green-ink)">EVENING PEAK</text>`:'')}
+  if(n>48){if(d>0)g+=`<line x1="${x(d*24)}" x2="${x(d*24)}" y1="${T}" y2="${H-30}" stroke="var(--ink)" stroke-width=".6"/>`;g+=`<text x="${x(d*24+11.5)}" y="${H-8}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">${d===0?'Today':dayShort(d)}</text>`}
+  else for(let h=0;h<24;h+=3){const i=d*24+h;if(i>=r0&&i<=r1)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" font-family="Martian Mono,monospace" fill="var(--ink2)">${pad(h)}</text>`}}
+ g+=`<line x1="${L}" x2="${W-8}" y1="${y(35)}" y2="${y(35)}" stroke="var(--alert)" stroke-dasharray="5 4"/><text x="${L+6}" y="${y(35)-5}" font-size="11" font-weight="600" fill="var(--alert)">Heatwave ${cv(35).toFixed(0)}°</text>`;
+ if(LY.band){const up=P(F.hi),dw=P(F.lo).reverse();g+=`<path d="${sm(up)}${sm(dw).replace('M','L')}Z" fill="url(#hatch)"/>`}
+ if(LY.lines)g+=`<path d="${sm(P(F.lo))}" fill="none" stroke="var(--cool)" stroke-width="1.2"/><path d="${sm(P(F.hi))}" fill="none" stroke="var(--alert)" stroke-width="1.2"/>`;
+ g+=`<path d="${sm(P(F.md))}" fill="none" stroke="var(--ink)" stroke-width="2.2"/>`;
+ for(let d=Math.floor(r0/24);d<=Math.floor(r1/24);d++){let bi=-1;for(let i=Math.max(r0,d*24);i<=Math.min(r1,d*24+23);i++)if(bi<0||F.md[i]>F.md[bi])bi=i;g+=`<rect x="${x(bi)-3.5}" y="${y(F.md[bi])-3.5}" width="7" height="7" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/><text x="${x(bi)}" y="${y(F.md[bi])-10}" text-anchor="middle" font-size="12" font-family="Martian Mono,monospace" font-weight="600" fill="var(--ink)">${cv(F.md[bi]).toFixed(0)}°</text>`}
+ const mm=idx.map(i=>F.md[i]),mx=Math.max(...mm),mn=Math.min(...mm),av=mm.reduce((p,c)=>p+c,0)/mm.length,hh=mm.filter(v=>v>=35).length,u='°'+U,at=i=>(Math.floor(i/24)===0?'Today':dayShort(Math.floor(i/24)))+' '+pad(i%24);
+ $('#fstats').innerHTML=[['Hottest',cv(mx).toFixed(1)+u,at(r0+mm.indexOf(mx))],['Coolest',cv(mn).toFixed(1)+u,at(r0+mm.indexOf(mn))],['Average',cv(av).toFixed(1)+u,'q50 over the range'],['Heatwave hours',hh,'q50 at 35 °C or above']].map(k=>`<div><small>${k[0]}</small><span class="num">${k[1]}</span><small>${k[2]}</small></div>`).join('');
  $('#chart').innerHTML=g}
 
-const FD=['7 days','Today','Thu','Fri','Sat','Sun','Mon','Tue'];
+const FD=['7 days',...[0,1,2,3,4,5,6].map(k=>k===0?'Today':dayShort(k))];
 $('#fdays').innerHTML=FD.map((l,k)=>`<button data-k="${k}" aria-pressed="${k==0}">${l}</button>`).join('');
-$('#fdays').onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=+b.dataset.k;R=k?[(k-1)*24,(k-1)*24+23]:[0,167];document.querySelectorAll('#fdays button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()};
+function setRange(k){R=k?[(k-1)*24,(k-1)*24+23]:[0,167];$$('#fdays button').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.k===k));draw()}
+$('#fdays').onclick=e=>{const b=e.target.closest('button');if(b)setRange(+b.dataset.k)};
 $('#oBand').onchange=e=>{LY.band=+e.target.checked;draw()};$('#oLines').onchange=e=>{LY.lines=+e.target.checked;draw()};$('#oPeak').onchange=e=>{LY.peak=+e.target.checked;draw()};
-$('#fu').onclick=e=>{const b=e.target.closest('button');if(!b)return;U=b.dataset.u;document.querySelectorAll('#fu button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()};
+$('#fu').onclick=e=>{const b=e.target.closest('button');if(!b)return;U=b.dataset.u;$$('#fu button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()};
 loadForecast();
 
-function hero(){const d=['Wed','Thu','Fri','Sat','Sun','Mon','Tue'],c=$('#city').value.split(' (')[0];let h='',mx1=0;
- for(let k=0;k<7;k++){const a=F.md.slice(k*24,k*24+24),mx=Math.max(...a),mn=Math.min(...a);if(k==1)mx1=mx;const col=mx>=35?'#ff7a6b':mx>=33?'#ffc14d':'#5ee0a8';h+=`<a class="day" href="#forecast"><small>${k?d[k]:'Today'}</small><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="margin:4px 0"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg><b>${mx.toFixed(0)}Â°</b><small>${mn.toFixed(0)}Â° low</small><i style="background:${col}"></i></a>`}
- const msg=mx1>=35?'Heatwave likely. Expect very high cooling demand.':mx1>=33?'A hot day. Cooling demand will peak in the afternoon.':'Comfortable weather. Demand should stay near normal.';
- $('#hero').innerHTML=`<div><small>Tomorrow in ${c}</small><h2>Highs near ${mx1.toFixed(0)} Â°C. ${msg}</h2><p>Worst case: up to ${Math.max(...F.hi.slice(24,48)).toFixed(0)} Â°C. Tap a day for details.</p></div><div class="days">${h}</div>`;plan()}
-function plan(){const dn=['Today','Thu','Fri','Sat','Sun','Mon','Tue'],hot=dn.map((n,k)=>[n,Math.max(...F.hi.slice(k*24,k*24+24))]).filter(x=>x[1]>=38),al=$('#alert');
- al.style.display=hot.length?'block':'none';al.innerHTML=hot.length?`<b>Heat risk:</b> ${hot.map(x=>x[0]+' could reach '+x[1].toFixed(0)+' Â°C').join(', ')}. Cool the house early and avoid the 18:00 to 22:00 peak.`:'';
- const a=F.md.slice(24,48),lo=a.indexOf(Math.min(...a)),hi=a.indexOf(Math.max(...a)),f=h=>String(h).padStart(2,'0')+':00',st='font-size:28px';
- $('#plan').innerHTML=`<div class="card"><span class="ic">ðŸŒ¬ï¸</span><small>Best time to air the house</small><div class="big" style="${st}">${f(lo)}</div><span class="sub">Coolest hour, about ${a[lo].toFixed(0)} Â°C. Open windows now and run the AC less later.</span></div><div class="card"><span class="ic">ðŸŒ¡ï¸</span><small>Hottest hour</small><div class="big" style="${st}">${f(hi)}</div><span class="sub">About ${a[hi].toFixed(0)} Â°C. Cooling demand peaks around here.</span></div><div class="card"><span class="ic">âš¡</span><small>Avoid heavy appliances</small><div class="big" style="${st}">18:00 to 22:00</div><span class="sub">Evening peak hours, when the grid is under most strain.</span></div>`;icons()}
+function hero(){const c=$('#city').value.split(' (')[0],md=F.md,hi=F.hi,lo=F.lo;
+ const t=md.slice(24,48),mx=Math.max(...t),hiH=t.indexOf(mx),loH=t.indexOf(Math.min(...t));
+ $('#heroT').textContent='Tomorrow in '+c;
+ const big=$('#payBig');big.textContent=mx.toFixed(1)+'°C';big.classList.remove('print');void big.offsetWidth;big.classList.add('print');
+ $('#payRng').innerHTML=`Range <b>${dmin(lo,1).toFixed(1)}</b> to <b>${dmax(hi,1).toFixed(1)} °C</b> · q10 low to q90 high · peak at <b>${pad(hiH)}</b>`;
+ $('#payMsg').textContent=mx>=35?'Heatwave likely. Cooling demand will be very high; pre-cool before noon.':mx>=33?'A hot day. Cooling demand peaks in the afternoon.':'Comfortable weather. Demand should stay near normal.';
+ $('#plan').innerHTML=`<tbody><tr><td>Best time to air the house<small>Coolest hour, about ${t[loH].toFixed(0)} °C</small></td><td class="a">${pad(loH)}</td></tr><tr><td>Hottest hour<small>Cooling demand peaks around here, about ${mx.toFixed(0)} °C</small></td><td class="a">${pad(hiH)}</td></tr><tr class="tot"><td>Avoid heavy appliances<small style="font-weight:400">Evening peak, when the grid is most strained</small></td><td class="a">18:00–22:00</td></tr></tbody>`;
+ const hot=[0,1,2,3,4,5,6].map(k=>[dayName(k),dmax(hi,k)]).filter(x=>x[1]>=38),al=$('#alert');
+ al.style.display=hot.length?'block':'none';al.textContent=hot.length?`Heat risk: ${hot.map(x=>x[0]+' could reach '+x[1].toFixed(0)+' °C').join(', ')}. Cool the house early and avoid 18:00–22:00.`:'';
+ const all=[0,1,2,3,4,5,6].map(k=>[dmin(md,k),dmax(md,k)]),gl=Math.floor(Math.min(...all.map(x=>x[0]))/5)*5,gh=Math.ceil(Math.max(...all.map(x=>x[1]))/5)*5,pc=v=>((v-gl)/(gh-gl)*100).toFixed(1);
+ $('#hist').innerHTML=all.map(([l,h],k)=>`<a href="#forecast" data-k="${k+1}"><span><b>${dayName(k)}</b></span><span class="bar" aria-hidden="true"><i class="${h>=35?'hot':''}" style="left:${pc(l)}%;width:${(pc(h)-pc(l)).toFixed(1)}%"></i></span><span class="num">${h.toFixed(1)}°</span><span class="num lo">${l.toFixed(0)}°</span></a>`).join('');
+}
+$('#hist').onclick=e=>{const a=e.target.closest('a');if(a)setTimeout(()=>setRange(+a.dataset.k))};
 
-// chart hover tooltip
-(function(){const s=$('#chart'),tip=$('#tip'),dn=['Wed','Thu','Fri','Sat','Sun','Mon','Tue'];
- function mv(e){const r=s.getBoundingClientRect(),cr=s.parentElement.getBoundingClientRect();const px=(e.clientX-r.left)/r.width*900;const i=Math.max(R[0],Math.min(R[1],R[0]+Math.round((px-40)/852*(R[1]-R[0]))));
-  const x=40+(i-R[0])/(R[1]-R[0])*852;s.querySelector('#cur')?.remove();s.insertAdjacentHTML('beforeend',`<g id="cur"><line x1="${x}" x2="${x}" y1="10" y2="290" stroke="var(--ink)" opacity=".4"/></g>`);
-  const hr=i%24;tip.innerHTML=`<b>${dn[Math.floor(i/24)]} ${String(hr).padStart(2,'0')}:00${hr>=18&&hr<22?' (evening peak)':''}</b><br>High case: ${cv(F.hi[i]).toFixed(1)} Â°${U}<br>Expected: <b>${cv(F.md[i]).toFixed(1)} Â°${U}</b><br>Low case: ${cv(F.lo[i]).toFixed(1)} Â°${U}`;
-  tip.style.display='block';const l=e.clientX-cr.left+14;tip.style.left=Math.min(l,cr.width-tip.offsetWidth-8)+'px';tip.style.top=(e.clientY-cr.top-70)+'px'}
+// city comparison from three live forecasts
+const CF={};
+async function cities(){const sel=$('#city');
+ await Promise.all([...sel.options].map(async(o,i)=>{try{CF[i]=await (await fetch(`${API}/api/forecast?city=${encodeURIComponent(o.value)}`)).json()}catch(e){CF[i]=null}}));
+ $('#cities').innerHTML=[...sel.options].map((o,i)=>{const f=CF[i],[nm,dc]=o.value.replace(')','').split(' (');if(!f)return `<tr data-i="${i}"><td><b>${nm}</b></td><td>${dc}</td><td colspan="3">Unavailable</td><td></td></tr>`;
+  const t=f.md.slice(24,48),m=Math.max(...t);return `<tr data-i="${i}"><td><b>${nm}</b></td><td>${dc}</td><td class="n" style="color:${m>=35?'var(--alert)':'inherit'}">${m.toFixed(1)} °C</td><td class="n">${dmin(f.lo,1).toFixed(1)} – ${dmax(f.hi,1).toFixed(1)} °C</td><td class="n">${pad(t.indexOf(m))}</td><td><button>View</button></td></tr>`}).join('');markCity()}
+function markCity(){$$('#cities tr').forEach(r=>+r.dataset.i===$('#city').selectedIndex?r.setAttribute('aria-current','true'):r.removeAttribute('aria-current'))}
+$('#cities').onclick=e=>{const r=e.target.closest('tr[data-i]');if(!r||!e.target.closest('button'))return;$('#city').selectedIndex=+r.dataset.i;$('#city').dispatchEvent(new Event('change'))};
+cities();
+
+// chart tooltip
+(function(){const s=$('#chart'),tip=$('#tip');
+ function mv(e){if(!window.F)return;const r=s.getBoundingClientRect(),cr=s.parentElement.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*900,i=Math.max(R[0],Math.min(R[1],R[0]+Math.round((px-40)/852*(R[1]-R[0])))),x=40+(i-R[0])/(R[1]-R[0])*852,hr=i%24;
+  s.querySelector('#cur')?.remove();s.insertAdjacentHTML('beforeend',`<line id="cur" x1="${x}" x2="${x}" y1="10" y2="290" stroke="var(--ink)" stroke-dasharray="2 3"/>`);
+  tip.innerHTML=`<b>${dayName(Math.floor(i/24))} ${pad(hr)}${hr>=18&&hr<22?' · evening peak':''}</b><br>High case <span class="num">${cv(F.hi[i]).toFixed(1)}°${U}</span><br>Expected <b class="num">${cv(F.md[i]).toFixed(1)}°${U}</b><br>Low case <span class="num">${cv(F.lo[i]).toFixed(1)}°${U}</span>`;
+  tip.style.display='block';tip.style.left=Math.min(e.clientX-cr.left+14,cr.width-tip.offsetWidth-8)+'px';tip.style.top=Math.max(4,e.clientY-cr.top-80)+'px'}
  s.addEventListener('pointermove',mv);s.addEventListener('pointerleave',()=>{tip.style.display='none';s.querySelector('#cur')?.remove()})})();
 
 // bill
-function bill(){const u=+$('#units').value,k=document.querySelector('[name=t]:checked').value;$('#uVal').textContent=u;$('#typeLbl').textContent=typeName[k];
- let rem=u,prev=0,tot=0,html='';for(const [cap,r] of rates[k]){const q=Math.max(0,Math.min(rem,cap-prev));if(q>0){const c=q*r;tot+=c;html+=`<div class="line"><span>${q} units Ã— Rs ${r}</span><b>Rs ${c.toLocaleString()}</b></div>`}rem-=q;prev=cap}
- const nx=rates[k].find(x=>x[0]>u&&x[0]<1e9);if(nx)html+=`<div class="hint">You are ${nx[0]-u} units away from the next price band, where each unit costs Rs ${rates[k][rates[k].indexOf(nx)+1][1]}. Staying below ${nx[0]} units keeps your bill lower.</div>`;
- const tax=Math.round(tot*.17);html+=`<div class="line"><span>Taxes and surcharges (about 17%)</span><b>Rs ${tax.toLocaleString()}</b></div>`;
- $('#total').textContent='Rs '+(tot+tax).toLocaleString();$('#lines').innerHTML=html}
+function bill(){const u=+$('#units').value,sel=document.querySelector('[name=t]:checked').value,lost=sel==='prot'&&u>200,k=lost?'unprot':sel;$('#uVal').textContent=u;$('#uVal2').textContent=u;$('#typeLbl').textContent=typeName[k];
+ let rem=u,prev=0,tot=0,html='';for(const [cap,r] of rates[k]){const q=Math.max(0,Math.min(rem,cap-prev));if(q>0){const c=q*r;tot+=c;html+=`<tr><td>${cap<1e9?`Slab ${prev+1}–${cap}`:prev?`Above ${prev}`:'All units'}<small>${q} units × Rs ${r}</small></td><td class="a">Rs ${Math.round(c).toLocaleString()}</td></tr>`}rem-=q;prev=cap}
+ const tax=Math.round(tot*.17);html+=`<tr><td>Taxes and surcharges<small>Approximated at 17%</small></td><td class="a">Rs ${tax.toLocaleString()}</td></tr>`;
+ if(lost)html=`<tr><td colspan="2" style="color:var(--alert);font-weight:600">Over 200 units: protected status is lost, so unprotected slabs apply.</td></tr>`+html;$('#lines').innerHTML=html;$('#total').textContent='Rs '+Math.round(tot+tax).toLocaleString();
+ const nx=rates[k].find(x=>x[0]>u&&x[0]<1e9),ni=rates[k].indexOf(nx);
+ $('#nextBand').innerHTML=nx&&rates[k][ni+1]?`<p class="next"><b>${nx[0]-u} units</b> to the next slab, where each unit costs Rs ${rates[k][ni+1][1]}. Staying at or below ${nx[0]} units keeps the bill lower.</p>`:''}
 $('#units').oninput=bill;$('#tariff').onchange=bill;bill();
 
-function toast(t){if(window.quiet)return;const e=$('#toast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,2200)}
-// appliance estimator
 const ap=[['Air conditioner (1.5 ton)',.9,8,1],['Ceiling fans (4)',.3,12,1],['Fridge',.12,24,1],['Lights and TV',.25,6,1],['Washing machine',.5,1,0]];
-$('#apps').innerHTML=ap.map((a,i)=>`<div class="line"><label><input type="checkbox" data-i="${i}" ${a[3]?'checked':''}> ${a[0]}</label><span><input type="number" min="0" max="24" value="${a[2]}" data-h="${i}"> h/day</span></div>`).join('');
-function est(){let u=0;ap.forEach((a,i)=>{if($(`[data-i="${i}"]`).checked)u+=a[1]*(+$(`[data-h="${i}"]`).value||0)*30});u=Math.round(u);$('#useApps').textContent=`Use this estimate (about ${u} units a month)`;return u}
-$('#apps').oninput=est;est();$('#useApps').onclick=()=>{$('#units').value=Math.min(1000,est());bill()};
+$('#apps').innerHTML='<tbody>'+ap.map((a,i)=>`<tr><td><label><input type="checkbox" data-i="${i}" ${a[3]?'checked':''}>${a[0]}</label></td><td><input type="number" min="0" max="24" value="${a[2]}" data-h="${i}" aria-label="${a[0]} hours per day"> h/day</td></tr>`).join('')+'</tbody>';
+function est(){let u=0;ap.forEach((a,i)=>{if($(`#apps [data-i="${i}"]`).checked)u+=a[1]*(+$(`#apps [data-h="${i}"]`).value||0)*30});u=Math.round(u);$('#useApps').textContent=`Use this estimate · about ${u} units a month`;return u}
+$('#apps').oninput=est;est();$('#useApps').onclick=()=>{$('#units').value=Math.min(1000,est());bill();toast('Usage set from appliances')};
 
-// explorer view toggle, city comparison, 3D card tilt
-$('#seg').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));const c=b.dataset.m==='c';$('#cg').classList.toggle('on',c);document.querySelector('#v-warehouse .tbl').style.display=c?'none':''};
-function cities(){const sel=$('#city'),hi=s=>{let m=-9;for(let i=24;i<48;i++)m=Math.max(m,29-s/2+5*Math.sin((i%24-9)/24*6.28)+Math.sin(i/40)*1.2);return m};
- $('#cities').innerHTML=[...sel.options].map((o,i)=>{const m=hi(i*3),r=m>=35?['Very hot','a']:m>=33?['Hot','a']:['Comfortable',''];return `<button class="card city" data-i="${i}" aria-pressed="${sel.selectedIndex===i}"><span class="ic">ðŸ™ï¸</span><small style="display:block;color:var(--mute)">${o.value}</small><b>${m.toFixed(0)} Â°C</b><span class="tag ${r[1]}">${r[0]} tomorrow</span></button>`}).join('');$('#cinfo').innerHTML=`<span>Tomorrowâ€™s high</span><b>${hi(sel.selectedIndex*3).toFixed(0)} Â°C</b>`;icons()}
-$('#cities').onclick=e=>{const b=e.target.closest('.city');if(!b)return;$('#city').selectedIndex=+b.dataset.i;$('#city').dispatchEvent(new Event('change'))};
-cities();
-(function(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;let cur;const m=document.querySelector('main');
- m.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const c=e.target.closest('.kpi,.city,.slice>.card');if(cur&&cur!==c)cur.style.transform='';cur=c;if(!c)return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(700px) rotateX(${-y*7}deg) rotateY(${x*9}deg) translateY(-3px)`});
- m.addEventListener('pointerleave',()=>{if(cur)cur.style.transform=''})})();
+function toast(t){if(window.quiet)return;const e=$('#toast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,2200)}
 
 // 3D heat map (three.js)
-var sc,cam,ren,grp,drag,px,py,built,vis;var ry=-.6,rx=.9;
-function g3(){if(!window.THREE)return;const el=$(window.vh?'#g3h':'#g3');if(!el.clientWidth)return;if(built){el.appendChild(ren.domElement);ren.setSize(el.clientWidth,el.clientHeight);cam.aspect=el.clientWidth/el.clientHeight;cam.updateProjectionMatrix()}
- if(!built){built=true;sc=new THREE.Scene();cam=new THREE.PerspectiveCamera(40,el.clientWidth/el.clientHeight,.1,100);cam.position.set(0,9,17);cam.lookAt(0,1,0);
+var sc,cam,ren,grp,drag,px,py,built;var ry=-.6,rx=.9;
+function g3(recolor){if(!window.THREE||!window.F)return;const el=$(window.vh?'#g3h':'#g3');if(!el.clientWidth)return;
+ if(built){el.appendChild(ren.domElement);ren.setSize(el.clientWidth,el.clientHeight);cam.aspect=el.clientWidth/el.clientHeight;cam.updateProjectionMatrix()}
+ if(!built){built=true;sc=new THREE.Scene();cam=new THREE.PerspectiveCamera(38,el.clientWidth/el.clientHeight,.1,100);cam.position.set(0,9,17);cam.lookAt(0,1,0);
   ren=new THREE.WebGLRenderer({antialias:true,alpha:true});ren.setPixelRatio(Math.min(devicePixelRatio,2));ren.setSize(el.clientWidth,el.clientHeight);el.appendChild(ren.domElement);
-  sc.add(new THREE.AmbientLight(0xffffff,.7));const l=new THREE.DirectionalLight(0xffffff,.8);l.position.set(5,10,6);sc.add(l);
-  ren.domElement.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY});
-  addEventListener('pointerup',()=>{drag=false});
+  sc.add(new THREE.AmbientLight(0xffffff,.75));const l=new THREE.DirectionalLight(0xffffff,.7);l.position.set(5,10,6);sc.add(l);
+  ren.domElement.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY});addEventListener('pointerup',()=>{drag=false});
   addEventListener('pointermove',e=>{if(!drag)return;ry+=(e.clientX-px)*.008;rx=Math.max(.3,Math.min(1.4,rx+(e.clientY-py)*.006));px=e.clientX;py=e.clientY});
   addEventListener('resize',()=>{const p=ren.domElement.parentElement;if(p&&p.clientWidth){ren.setSize(p.clientWidth,p.clientHeight);cam.aspect=p.clientWidth/p.clientHeight;cam.updateProjectionMatrix()}});
   const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  (function loop(){requestAnimationFrame(loop);if(!vis||!grp)return;if(!drag&&!calm)ry+=.003;grp.rotation.y=ry;grp.rotation.x=rx-.9;ren.render(sc,cam)})();}
+  (function loop(){requestAnimationFrame(loop);if(!window.vis||!grp)return;if(!drag&&!calm)ry+=.002;grp.rotation.y=ry;grp.rotation.x=rx-.9;ren.render(sc,cam)})()}
  if(grp){sc.remove(grp);grp.children.forEach(m=>{m.geometry.dispose();m.material.dispose()})}
- grp=new THREE.Group();const c=new THREE.Color();
- F.md.forEach((t,i)=>{const d=Math.floor(i/24),h=i%24,v=Math.min(1,Math.max(0,(t-20)/18)),ht=Math.max(.15,v*5);c.setHSL(.6-v*.6,.75,.5);
-  const m=new THREE.Mesh(new THREE.BoxGeometry(.5,ht,.5),new THREE.MeshLambertMaterial({color:c.clone()}));m.position.set((h-11.5)*.62,ht/2,(d-3)*1.5);grp.add(m)});
+ const css=getComputedStyle(document.documentElement),cC=new THREE.Color(css.getPropertyValue('--cool').trim()),cM=new THREE.Color('#d9d6cf'),cH=new THREE.Color(css.getPropertyValue('--alert').trim());
+ grp=new THREE.Group();const geo=new THREE.BoxGeometry(.5,1,.5);
+ F.md.forEach((t,i)=>{const d=Math.floor(i/24),h=i%24,v=Math.min(1,Math.max(0,(t-20)/18)),ht=Math.max(.15,v*5),c=v<.5?cC.clone().lerp(cM,v*2):cM.clone().lerp(cH,(v-.5)*2);
+  const m=new THREE.Mesh(geo.clone(),new THREE.MeshLambertMaterial({color:c}));m.scale.y=ht;m.position.set((h-11.5)*.62,ht/2,(d-3)*1.5);grp.add(m)});
  sc.add(grp)}
-if(vis)g3();
 
-// icons, command palette, sortable table, remembered city
-window.IC={'\u23f1':'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>','\ud83c\udfaf':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>','\ud83d\udee1':'<path d="M12 3l8 3v6c0 5-3.500 8-8 9-4.500-1-8-4-8-9V6z"/>','\ud83d\udd04':'<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>','\ud83d\udd27':'<path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/>','\ud83e\udde9':'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>','\ud83d\udea9':'<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>','\ud83c\udf06':'<path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 4v4M5 9l2 2M19 9l-2 2"/>','\ud83c\udf19':'<path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"/>','\ud83d\udd25':'<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/>','\ud83c\udf2c':'<path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7"/>','\ud83c\udf21':'<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/>','\u26a1':'<path d="M13 2L5 14h6l-1 8 8-12h-6z"/>','\ud83c\udfd9':'<path d="M4 21V8l6-3v16M10 21V10l10 3v8M3 21h18"/>'};
-function hc(t){return 'hsl('+(216-Math.min(1,Math.max(0,(t-20)/18))*216)+',70%,48%)'}
-function icons(){if(!window.IC)return;document.querySelectorAll('.ic').forEach(e=>{const k=e.textContent.replace(/\ufe0f/g,'').trim();if(IC[k])e.innerHTML=`<svg viewBox="0 0 24 24">${IC[k]}</svg>`})}
-icons();
-const pages=[['Overview','#health'],['Data explorer','#warehouse'],['7-day forecast','#forecast'],['Bill calculator','#bill'],['Policy assistant','#policy']];
+// command palette
+const pages=[['Overview','#health'],['7-day forecast','#forecast'],['Bill estimate','#bill'],['Policy advisor','#policy'],['Data explorer','#warehouse']];
 function cmdList(q){q=q.toLowerCase();const it=[...pages.map(p=>['Go to '+p[0],()=>location.hash=p[1]]),...[...$('#city').options].map((o,i)=>['Switch city: '+o.value,()=>{$('#city').selectedIndex=i;$('#city').dispatchEvent(new Event('change'))}]),['Toggle theme',()=>$('#theme').click()]].filter(x=>x[0].toLowerCase().includes(q));
  $('#cmdl').innerHTML='';it.forEach((x,i)=>{const b=document.createElement('button');b.textContent=x[0];if(!i)b.className='on';b.onclick=()=>{$('#cmd').close();x[1]()};$('#cmdl').appendChild(b)})}
 function openCmd(){$('#cmd').showModal();$('#cmdq').value='';cmdList('')}
@@ -432,33 +668,24 @@ $('#cmdk').onclick=openCmd;$('#cmdq').oninput=e=>cmdList(e.target.value);
 $('#cmdq').onkeydown=e=>{if(e.key==='Enter'){const b=$('#cmdl button');if(b)b.click()}};
 addEventListener('keydown',e=>{if((e.key==='k'&&(e.metaKey||e.ctrlKey))||(e.key==='/'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))){e.preventDefault();if(!$('#cmd').open)openCmd()}});
 $('#cmd').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
-$('#v-warehouse thead').onclick=e=>{const th=e.target.closest('th');if(!th)return;const i=th.cellIndex,d=th.dataset.d==='a'?-1:1;th.dataset.d=d>0?'a':'d';const tb=$('#wrows');[...tb.rows].sort((a,b)=>{const x=a.cells[i].textContent,y=b.cells[i].textContent;return d*(isNaN(x)||isNaN(y)?x.localeCompare(y):x-y)}).forEach(r=>tb.appendChild(r))};
-try{const s=localStorage.getItem('bi-city');if(s!==null&&$('#city').options[+s]){$('#city').selectedIndex=+s;window.quiet=1;$('#city').dispatchEvent(new Event('change'));window.quiet=0}}catch(e){}
+try{const s=localStorage.getItem('bi-city');if(s!==null&&$('#city').options[+s]&&+s!==0){$('#city').selectedIndex=+s;window.quiet=1;$('#city').dispatchEvent(new Event('change'));window.quiet=0}}catch(e){}
 $('#city').addEventListener('change',()=>{try{localStorage.setItem('bi-city',$('#city').selectedIndex)}catch(e){}});
 
-// policy assistant (real RAG)
-async function ask(t){if(!t.trim())return;
- const c=$('#chat');
- c.insertAdjacentHTML('beforeend',`<div class="msg u"><div class="bb"></div></div>`);
- c.lastChild.firstChild.textContent=t;
- c.insertAdjacentHTML('beforeend',`<div class="msg b" id="typing"><span class="av s">AI</span><div class="bb"><span class="dots"><i></i><i></i><i></i></span></div></div>`);
- c.scrollTop=c.scrollHeight;
- try{
-  const r=await fetch(`${API}/api/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:t})});
-  const d=await r.json();
-  $('#typing').remove();
-  const chips=d.fallback
-   ?`<div class="chips"><span class="chip a">No matching source Â· Fallback triggered: yes</span></div>`
-   :`<div class="chips"><span class="chip g">Source: ${d.source}</span><span class="chip b">Confidence ${d.confidence} Â· Fallback triggered: no</span></div>`;
-  c.insertAdjacentHTML('beforeend',`<div class="msg b"><span class="av s">AI</span><div class="bb"><b>Policy advisory</b><br>${d.answer}${chips}</div></div>`);
- }catch(e){
-  $('#typing').remove();
-  c.insertAdjacentHTML('beforeend',`<div class="msg b"><span class="av s">AI</span><div class="bb">Service temporarily unavailable. Please try again.</div></div>`);
- }
- c.scrollTop=c.scrollHeight;$('#q').value=''}
-$('#send').onclick=()=>ask($('#q').value);$('#clr').onclick=()=>{$('#chat').innerHTML='<div class="msg b"><span class="av s">AI</span><div class="bb">Chat cleared. What would you like to know?</div></div>'};
-$('#col').onclick=()=>{$('.app').classList.toggle('c');setTimeout(()=>dispatchEvent(new Event('resize')),60)};document.querySelectorAll('#nav a').forEach(a=>a.title=a.textContent);$('#q').onkeydown=e=>{if(e.key==='Enter')ask(e.target.value)};
-$('#sugg').onclick=e=>{const b=e.target.closest('button');if(b)ask(b.querySelector('small').textContent)};
+// policy advisor (RAG)
+const md=t=>window.marked&&window.DOMPurify?DOMPurify.sanitize(marked.parse(t||'')):esc(t).replace(/\n/g,'<br>');
+async function ask(t){if(!t.trim())return;const c=$('#chat');
+ c.insertAdjacentHTML('beforeend',`<div class="entry q"><span class="k">Q</span><div class="t"></div></div>`);c.lastElementChild.querySelector('.t').textContent=t;
+ c.insertAdjacentHTML('beforeend',`<div class="entry" id="typing"><span class="k">A</span><div class="t wait">Searching documents, then the web if needed</div></div>`);c.scrollTop=c.scrollHeight;$('#q').value='';
+ try{const r=await fetch(`${API}/api/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:t})});const d=await r.json();$('#typing').remove();
+  const p=d.pathway||(d.fallback?'insufficient':'documents'),docs=d.source?`<span>Documents: <b>${esc(d.source)}</b></span>`:'';
+  const src={documents:`<span class="tag ok">Project documents</span>${docs}`,web:`<span class="tag web">Web research</span>`,'documents+web':`<span class="tag web">Documents + web research</span>${docs}`,calculation:`<span class="tag ok">Calculation · no source needed</span>`,off_topic:`<span class="tag no">Out of scope</span>`}[p]||`<span class="tag no">Insufficient evidence</span>`;
+  const ws=(d.web_sources||[]).filter(w=>/^https?:\/\//i.test(w.url)).map((w,i)=>`<li><a href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${esc(w.title)}</a> <small>${esc(new URL(w.url).hostname)}${w.published_date?' · '+esc(String(w.published_date).slice(0,10)):''}${w.official?' · Official':''}</small></li>`).join('');
+  c.insertAdjacentHTML('beforeend',`<div class="entry"><span class="k">A</span><div class="t md">${md(d.answer)}</div><div class="src">${src}</div>${ws?`<ol class="wsrc">${ws}</ol>`:''}</div>`)}
+ catch(e){$('#typing').remove();c.insertAdjacentHTML('beforeend',`<div class="entry"><span class="k" style="color:var(--alert)">ERR</span><div class="t">The advisor did not respond. The backend may be waking up; try again in a minute.</div></div>`)}
+ c.scrollTop=c.scrollHeight}
+$('#send').onclick=()=>ask($('#q').value);$('#q').onkeydown=e=>{if(e.key==='Enter')ask(e.target.value)};
+$('#clr').onclick=()=>{$('#chat').innerHTML='<div class="entry"><span class="k">NOTE</span><div class="t sub" style="margin:0">Register cleared.</div></div>'};
+$('#sugg').onclick=e=>{const b=e.target.closest('button');if(b)ask(b.textContent)};
 </script>
 </body>
 </html>

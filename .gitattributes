@@ -1,0 +1,2 @@
+# Ensure LightGBM model files keep LF newlines because byte offsets in tree_sizes depend on exact byte count
+models/*.txt eol=lf

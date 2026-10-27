@@ -5,7 +5,7 @@ Purpose: Tests warehouse verification, table existence, and row_id uniqueness.
 
 from pathlib import Path
 import duckdb
-from pipeline.warehouse_pipeline import DataWarehousePipeline
+from backend.pipeline.warehouse_pipeline import DataWarehousePipeline
 
 
 def test_warehouse_builds_tables_successfully(tmp_path):

@@ -340,8 +340,7 @@ Bijli-Insight-Pakistan/
 │   └── hackathonguide.md
 ├── AI_Use_Log.md             ← required submission doc
 ├── Dataset_Declaration.md    ← required submission doc
-├── HANDOFF.md                ← session-to-session state summary
-├── Procfile                  ← web: uvicorn backend.api:app (for cloud deploy if needed)
+├── render.yaml               ← Render blueprint for the API
 ├── Makefile
 └── requirements.txt
 ```

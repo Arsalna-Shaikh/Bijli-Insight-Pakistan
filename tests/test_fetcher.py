@@ -3,7 +3,8 @@ Append to: tests/test_fetcher.py
 Purpose: Asserts ManifestBuilder constructs the correct ledger columns.
 """
 from pathlib import Path
-from pipeline.generate_manifest import ManifestBuilder
+import pandas as pd
+from backend.pipeline.generate_manifest import ManifestBuilder
 
 
 def test_manifest_builder_contract(tmp_path):

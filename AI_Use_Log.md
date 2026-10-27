@@ -1,0 +1,15 @@
+# AI Use Log — Bijli-Insight Pakistan
+
+| Tool & Version | Task | What Was Kept / Changed | Who Can Explain |
+|---|---|---|---|
+| Claude Code (claude-sonnet-4-6) | Scaffolded initial project architecture: module structure, class skeletons, docstrings, algorithm comments in stubs | All scaffolded code reviewed; implemented algorithms replaced comment stubs; hardcoded fake values removed and replaced with real computation | Full team |
+| Claude Code (claude-sonnet-4-6) | Generated README.md and module documentation including Mermaid architecture diagrams | Content reviewed for accuracy; diagrams verified against actual code structure | Full team |
+| Claude Code (claude-sonnet-4-6) | Identified and fixed disqualifying issues: hardcoded MAE metrics in flow.py, fake forecast chart using np.random.normal, fake RAG responses using if/elif keyword matching | All fixes applied; real LightGBM model inference, real ChromaDB RAG, real computed metrics now used throughout | Full team |
+| Claude Code (claude-sonnet-4-6) | Implemented three NotImplementedError stubs in pipeline/data_fetcher.py | Algorithm was pre-written in comments; implementation follows documented design exactly; team reviewed each method | Full team |
+| Claude Code (claude-sonnet-4-6) | Created Dataset_Declaration.md, AI_Use_Log.md, fix.md submission documents | Content reflects actual project decisions and verified fixes | Full team |
+| Claude Code (claude-opus-5-5) | Deployed the FastAPI backend to Render (render.yaml, /health endpoint, requirements-render.txt) and wired the Vercel frontend to it | Deployment verified endpoint by endpoint on the live URLs; pytz dependency fix found from Render logs | Full team |
+| Claude Code (claude-opus-5-5) | Reviewed and merged the `kashan` branch (Groq-backed RAG synthesis); integrated Markdown answers into the HTML chat with DOMPurify sanitising | Restored the documented "I don't know" fallback wording so tests and docs agree; 18/18 tests pass | Full team |
+| Claude Code (claude-opus-5-5) | Redesigned index.html ("The Monthly Bill" visual system, docs/DESIGN.md) | Removed remaining hardcoded/fabricated figures from the UI and fallback paths; every number now comes from the API or the pipeline's status file | Full team |
+| Claude Code (claude-opus-5-5) | Rewrote README.md and organised the repository for submission | Metrics and paths checked against data/pipeline_status.json and the code | Full team |
+| Claude Code (claude-opus-5-5) | Removed the hardcoded offline reading from the Prefect flow (now logs FAILED_FETCH) and fixed the dashboard's appliance estimator, which read city-table rows after forecasts loaded | Both verified live: real flow runs logged; estimator stays at 455 units after the city table loads | Full team |
+| Claude Code (claude-opus-5-5) | Added the hybrid RAG + Tavily web-search fallback with source labelling, honest outage handling and a rate-limit fallback model | Tested with mocked and live Groq/Tavily calls; web URLs come only from search results; 38/38 tests pass | Full team |

@@ -1,0 +1,11 @@
+run_timestamp_utc,flow_name,state,model_mae,baseline_mae,improvement_pct
+2026-10-21T08:40:03.170183+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-21T17:58:18.611403+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-21T17:58:58.128572+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-21T18:23:04.499299+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-21T20:05:51.340699+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-21T22:10:28.365419+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-21T23:05:47.978655+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-22T00:05:38.216490+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-22T08:51:16.752626+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59
+2026-10-22T08:57:12.258248+00:00,bijli_insight_hourly_flow,COMPLETED,0.4023,1.8795,78.59

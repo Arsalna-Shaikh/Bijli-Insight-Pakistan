@@ -23,7 +23,7 @@ from backend.ml.model_evaluator import ModelFairnessEvaluator
 def task_fetch_live_observation(city: str = "karachi") -> pd.DataFrame:
     """
     Step 1: Fetches the latest hour's weather observation from Open-Meteo.
-    Falls back gracefully to mock live observation if offline.
+    Raises on any failure; the flow then logs FAILED_FETCH instead of inventing data.
     """
     coords = {
         "karachi": (24.86, 67.00),
@@ -33,28 +33,16 @@ def task_fetch_live_observation(city: str = "karachi") -> pd.DataFrame:
     lat, lon = coords.get(city.lower(), (24.86, 67.00))
     now_utc = pd.Timestamp.now("UTC").floor("h")
 
-    try:
-        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m"
-        resp = requests.get(url, timeout=5)
-        if resp.status_code == 200:
-            current = resp.json().get("current", {})
-            return pd.DataFrame([{
-                "filename": f"open-meteo-{lat:.2f}N{lon:.2f}E.csv",
-                "timestamp_utc": now_utc,
-                "temperature_c": float(current.get("temperature_2m", 28.5)),
-                "humidity_pct": float(current.get("relative_humidity_2m", 65.0)),
-                "wind_speed_kmh": float(current.get("wind_speed_10m", 12.0)),
-            }])
-    except Exception:
-        pass
-
-    # Fallback realistic observation
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m"
+    resp = requests.get(url, timeout=5)
+    resp.raise_for_status()
+    current = resp.json()["current"]
     return pd.DataFrame([{
-        "filename": "open-meteo-24.85N66.99E7m.csv",
+        "filename": f"open-meteo-{lat:.2f}N{lon:.2f}E.csv",
         "timestamp_utc": now_utc,
-        "temperature_c": 29.5,
-        "humidity_pct": 62.0,
-        "wind_speed_kmh": 14.0,
+        "temperature_c": float(current["temperature_2m"]),
+        "humidity_pct": float(current["relative_humidity_2m"]),
+        "wind_speed_kmh": float(current["wind_speed_10m"]),
     }])
 
 
@@ -108,7 +96,7 @@ def task_append_warehouse(df_clean: pd.DataFrame, db_file: Path) -> str:
 
 
 @task
-def task_run_inference_and_log_status(db_file: Path, status_file: Path, run_log_file: Path) -> Dict[str, Any]:
+def task_run_inference_and_log_status(db_file: Path, status_file: Path, run_log_file: Path, observed_utc: pd.Timestamp) -> Dict[str, Any]:
     """
     Step 4: Runs real quantile inference on gold table, computes MAE vs t-168 baseline,
     writes data/pipeline_status.json, and appends to data/prefect_runs.csv.
@@ -137,7 +125,7 @@ def task_run_inference_and_log_status(db_file: Path, status_file: Path, run_log_
     status_payload = {
         "last_run_utc": pd.Timestamp.now("UTC").strftime("%Y-%m-%d %H:%M UTC"),
         "status": "SUCCESS",
-        "data_freshness_minutes": 2,
+        "data_freshness_minutes": int((pd.Timestamp.now("UTC") - observed_utc).total_seconds() // 60),
         "model_mae": round(model_mae, 4),
         "baseline_mae": round(baseline_mae, 4),
         "improvement_pct": improvement_pct,
@@ -164,6 +152,20 @@ def task_run_inference_and_log_status(db_file: Path, status_file: Path, run_log_
     return status_payload
 
 
+def log_failed_fetch(run_log_file: Path, exc: Exception) -> None:
+    """Appends a FAILED_FETCH row to the run log; metric columns stay empty."""
+    entry = pd.DataFrame([{
+        "run_timestamp_utc": pd.Timestamp.now("UTC").isoformat(),
+        "flow_name": "bijli_insight_hourly_flow",
+        "state": "FAILED_FETCH",
+        "model_mae": None,
+        "baseline_mae": None,
+        "improvement_pct": None,
+    }])
+    run_log_file.parent.mkdir(parents=True, exist_ok=True)
+    entry.to_csv(run_log_file, mode="a", header=not run_log_file.exists(), index=False)
+
+
 @flow(name="bijli_insight_hourly_flow")
 def scheduled_hourly_pipeline():
     """
@@ -175,10 +177,17 @@ def scheduled_hourly_pipeline():
     status_file = Path("data/pipeline_status.json")
     run_log_file = Path("data/prefect_runs.csv")
 
-    raw_obs = task_fetch_live_observation(city="karachi")
+    try:
+        raw_obs = task_fetch_live_observation(city="karachi")
+    except Exception as exc:
+        # Open-Meteo unreachable after retries: record the failure, write nothing to the warehouse.
+        log_failed_fetch(run_log_file, exc)
+        return {"status": "FAILED_FETCH", "error": str(exc)}
     clean_obs = task_run_quality_audit(raw_obs, log_file)
     new_row_id = task_append_warehouse(clean_obs, db_file)
-    metrics = task_run_inference_and_log_status(db_file, status_file, run_log_file)
+    metrics = task_run_inference_and_log_status(
+        db_file, status_file, run_log_file, raw_obs["timestamp_utc"].iloc[0]
+    )
     return metrics
 
 

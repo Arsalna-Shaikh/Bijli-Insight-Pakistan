@@ -1,0 +1,9 @@
+{
+  "last_run_utc": "2026-10-22 08:57 UTC",
+  "status": "SUCCESS",
+  "data_freshness_minutes": 57,
+  "model_mae": 0.4023,
+  "baseline_mae": 1.8795,
+  "improvement_pct": 78.59,
+  "active_records_count": 52632
+}

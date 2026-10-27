@@ -4,7 +4,7 @@ Purpose: Unit tests asserting baseline superiority and quantile non-crossing.
 """
 
 import numpy as np
-from ml.model_evaluator import ModelFairnessEvaluator
+from backend.ml.model_evaluator import ModelFairnessEvaluator
 
 
 def test_baseline_evaluation_accuracy():

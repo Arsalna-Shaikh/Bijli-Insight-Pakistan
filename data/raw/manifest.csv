@@ -1,4 +1,5 @@
 filename,source_url,publisher,fetch_timestamp_utc,sha256_hash,licence,row_count
-open-meteo-24.85N66.99E7m.csv,https://archive-api.open-meteo.com/v1/archive,Open-Meteo / PMD Weather Archive,2026-10-20T20:25:33.617481+00:00,1f70aced82c68ee0e310c99fbc735398405a6d5e6d8e658a4d1e879b5c771e1c,CC-BY 4.0 / Open Access,17544
-open-meteo-31.53N74.39E220m.csv,https://archive-api.open-meteo.com/v1/archive,Open-Meteo / PMD Weather Archive,2026-10-20T20:25:33.640470+00:00,b239a190af758110995943d3163020f12e889c8f5812ca1debaf9514ac4efa79,CC-BY 4.0 / Open Access,17544
-open-meteo-33.64N73.03E527m.csv,https://archive-api.open-meteo.com/v1/archive,Open-Meteo / PMD Weather Archive,2026-10-20T20:25:33.663454+00:00,25d4a3818da329f5504efaf400d81bb5b9979657f0d336ce52a660f3bd59a828,CC-BY 4.0 / Open Access,17544
+open-meteo-24.85N66.99E7m.csv,https://archive-api.open-meteo.com/v1/archive,Open-Meteo / PMD Weather Archive,2026-10-21T07:33:33.560267+00:00,298eaff0e226125c6ed4bef23ac8f08e0c806125b374f344f5f89a94b0e40db8,CC-BY 4.0 / Open Access,17544
+open-meteo-31.53N74.39E220m.csv,https://archive-api.open-meteo.com/v1/archive,Open-Meteo / PMD Weather Archive,2026-10-21T07:33:33.575864+00:00,49e9e3910df16f4f343ddb1e70dae407f7ffcc4bc56d7f5b197cf8a97063f0ef,CC-BY 4.0 / Open Access,17544
+open-meteo-33.64N73.03E527m.csv,https://archive-api.open-meteo.com/v1/archive,Open-Meteo / PMD Weather Archive,2026-10-21T07:33:33.591154+00:00,d5586172b069f194931531538a81ee762870d7502a26e8d9ba3e5d0c34c79d5c,CC-BY 4.0 / Open Access,17544
+nepra_tariff_slabs_2024.csv,https://nepra.org.pk/tariff/schedule,National Electric Power Regulatory Authority (NEPRA),2026-10-21T07:33:33.592658+00:00,c035b2e69452ae39270275a8b5b659c9cae51baadb8df74aa254d0a05a3a4545,Public Domain / Government of Pakistan,5
