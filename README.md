@@ -1,7 +1,7 @@
 # Bijli-Insight Pakistan · بجلی بصیرت پاکستان
 
 **National Energy Intelligence & Quantile Load Forecasting System**
-HackInsight 2026, Pakistan Energy Track · **Team: Void**
+HackInsight 2026, Pakistan Energy Track ·
 
 Bijli-Insight turns verified weather telemetry, NEPRA/NEECA policy documents and quantile forecasts into a decision studio for the K-Electric, LESCO and IESCO service areas.
 
